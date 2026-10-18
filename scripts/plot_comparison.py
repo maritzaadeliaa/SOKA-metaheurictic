@@ -18,18 +18,18 @@ INK2 = "#52514e"
 GRID = "#e4e3df"
 
 ALGO_COLORS = {
-    "TabuSearch": "#1f77b4",        # Biru (Metaheuristic 1)
-    "SimulatedAnnealing": "#e6550d" # Jingga (Metaheuristic 2)
+    "TabuSearch": "#1f77b4",          # Biru (Metaheuristic 1)
+    "FlowerPollination": "#2ca02c"   # Hijau/Emerald (Metaheuristic 2)
 }
 
 ALGO_LABELS = {
     "TabuSearch": "Tabu Search (TS)",
-    "SimulatedAnnealing": "Simulated Annealing (SA)"
+    "FlowerPollination": "Flower Pollination Algorithm (FPA)"
 }
 
 ALGO_MARKERS = {
     "TabuSearch": "o",
-    "SimulatedAnnealing": "^"
+    "FlowerPollination": "s"
 }
 
 METRICS = [
@@ -94,7 +94,7 @@ def plot_comparison_metric(rows, key, title, unit, slug):
         if not source_rows:
             continue
 
-        algos = ["TabuSearch", "SimulatedAnnealing"]
+        algos = ["TabuSearch", "FlowerPollination"]
         all_ys = []
 
         for algo in algos:
@@ -141,7 +141,7 @@ def plot_comparison_metric(rows, key, title, unit, slug):
         style(ax)
         ax.legend(frameon=False, fontsize=9)
 
-    fig.suptitle(f"Perbandingan {title}: Tabu Search (TS) vs Simulated Annealing (SA)",
+    fig.suptitle(f"Perbandingan {title}: Tabu Search (TS) vs Flower Pollination Algorithm (FPA)",
                  x=0.03, ha="left", fontsize=12, fontweight="bold", color=INK)
     fig.tight_layout()
     out_file = os.path.join(OUT, f"komparasi_{slug}.png")

@@ -1,9 +1,34 @@
-Langkah 1: Compile Program
-if (!(Test-Path "target\classes")) { New-Item -ItemType Directory -Path "target\classes" -Force }
-javac -cp "lib\cloudsim-3.0.3.jar" -d target\classes (Get-ChildItem -Path "src\main\java\com\cloudsim\meta\*.java").FullName
+============================================================
+CARA PALING SINGKAT & PRAKTIS (Tinggal ketik nama script)
+============================================================
 
-Langkah 2: Jalankan Program Utama (Main.java)
+1. Compile:
+.\compile.bat
+
+2. Jalankan Simulasi:
+.\run.bat
+
+3. Plot Grafik (TS vs FPA):
+python scripts/plot_comparison.py
+
+
+============================================================
+ATAU PERINTAH 1 BARIS (Natif Java, tanpa file .bat)
+============================================================
+
+1. Compile:
+javac -cp "lib\cloudsim-3.0.3.jar" -d target\classes src\main\java\com\cloudsim\meta\*.java
+
+2. Run:
 java -cp "target\classes;lib\cloudsim-3.0.3.jar" com.cloudsim.meta.Main
 
-Langkah 3: Hasilkan Grafik Analisis Perbandingan (TS vs SA)
-python scripts/plot_comparison.py
+
+============================================================
+CATATAN TENTANG MAVEN (mvn)
+============================================================
+Jika muncul error:
+"mvn : The term 'mvn' is not recognized..."
+Itu artinya Apache Maven belum ter-install di sistem Windows kamu.
+Gunakan cara di atas (compile.bat / javac) yang langsung berjalan tanpa perlu install Maven.
+Jika dosen mewajibkan pakai command 'mvn compile', silakan unduh Apache Maven dari:
+https://maven.apache.org/download.cgi dan tambahkan folder bin-nya ke Environment Variables (PATH).

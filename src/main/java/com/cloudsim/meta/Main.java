@@ -20,7 +20,7 @@ import org.cloudbus.cloudsim.core.CloudSim;
 /**
  * Main Runner untuk Eksperimen Komparasi Metaheuristik Task Scheduling di CloudSim:
  * - Algoritma 1: Tabu Search (TS)
- * - Algoritma 2: Simulated Annealing (SA)
+ * - Algoritma 2: Flower Pollination Algorithm (FPA)
  *
  * Menguji seluruh dataset GoCJ (100 s/d 1.000 task) dan Sintetik (100 s/d 10.000 task).
  */
@@ -73,10 +73,10 @@ public class Main {
 
         printAndSaveStats(datasets);
 
-        String[] algorithms = {"TabuSearch", "SimulatedAnnealing"};
+        String[] algorithms = {"TabuSearch", "FlowerPollination"};
 
         System.out.println("\n==========================================================================================================");
-        System.out.println("               HASIL KOMPARASI METAHEURISTIK TS vs SA (RATA-RATA " + REPEATS + " RUN PER DATASET)");
+        System.out.println("               HASIL KOMPARASI METAHEURISTIK TS vs FPA (RATA-RATA " + REPEATS + " RUN PER DATASET)");
         System.out.println("==========================================================================================================");
         System.out.printf("%-20s %-10s %-18s %12s %16s %9s %10s %12s %10s%n",
                 "Dataset", "Task", "Algoritma", "Makespan(s)", "Cost(G$)", "Util(%)", "Imbalance", "Thrput(t/s)", "Sched(ms)");
@@ -170,8 +170,8 @@ public class Main {
         long t0 = System.nanoTime();
         if ("TabuSearch".equalsIgnoreCase(algorithm) || "TS".equalsIgnoreCase(algorithm)) {
             new TabuSearchScheduler().schedule(cloudlets, vms);
-        } else if ("SimulatedAnnealing".equalsIgnoreCase(algorithm) || "SA".equalsIgnoreCase(algorithm)) {
-            new SimulatedAnnealingScheduler().schedule(cloudlets, vms);
+        } else if ("FlowerPollination".equalsIgnoreCase(algorithm) || "FPA".equalsIgnoreCase(algorithm)) {
+            new FlowerPollinationScheduler().schedule(cloudlets, vms);
         }
         double schedulingMs = (System.nanoTime() - t0) / 1_000_000.0;
 

@@ -8,7 +8,7 @@
     <artifactId>cloudsim-metaheuristic-scheduler</artifactId>
     <version>0.1.0-SNAPSHOT</version>
     <name>cloudsim-metaheuristic-scheduler</name>
-    <description>CloudSim 3.0.3 Tabu Search and Simulated Annealing Metaheuristic Schedulers</description>
+    <description>CloudSim 3.0.3 Tabu Search and Flower Pollination Algorithm Metaheuristic Schedulers</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

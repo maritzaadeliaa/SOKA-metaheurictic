@@ -1,5 +1,5 @@
 # Simulasi Penjadwalan Task Metaheuristik di CloudSim
-## Tabu Search (TS) vs Simulated Annealing (SA)
+## Tabu Search (TS) vs Flower Pollination Algorithm (FPA)
 
 Proyek simulasi komparasi dua algoritma **Metaheuristik** untuk *Task Scheduling* pada lingkungan komputasi awan heterogen menggunakan **CloudSim 3.0.3**, diuji pada dataset nyata **GoCJ (Google Cloud Jobs)** dan **Dataset Sintetik (100 s/d 10.000 task)**.
 
@@ -11,7 +11,7 @@ Proyek simulasi komparasi dua algoritma **Metaheuristik** untuk *Task Scheduling
 3. [Dataset Pengujian](#3-dataset-pengujian)
 4. [Fungsi Objektif (Fitness Function)](#4-fungsi-objektif-fitness-function)
 5. [Algoritma 1: Tabu Search (TS)](#5-algoritma-1-tabu-search-ts)
-6. [Algoritma 2: Simulated Annealing (SA)](#6-algoritma-2-simulated-annealing-sa)
+6. [Algoritma 2: Flower Pollination Algorithm (FPA)](#6-algoritma-2-flower-pollination-algorithm-fpa)
 7. [Metrik Evaluasi](#7-metrik-evaluasi)
 8. [Struktur Proyek](#8-struktur-proyek)
 9. [Cara Menjalankan Simulasi](#9-cara-menjalankan-simulasi)
@@ -25,7 +25,7 @@ Pada tugas sebelumnya, algoritma heuristik **Longest Processing Time (LPT)** tel
 - **Kelemahan Heuristik LPT**: Hanya fokus mencari waktu tercepat tanpa mempertimbangkan tarif sewa VM. Akibatnya, LPT cenderung membebani VM Compute-Intensive yang bertarif mahal (150 G$/s), menyebabkan **Total Cost membengkak**, dan mudah terjebak dalam *local optima*.
 - **Solusi Metaheuristik**:
   1. **Tabu Search (TS)**: Menggunakan memori jangka pendek (*Tabu List*) dan kriteria aspirasi untuk mengeksplorasi ruang solusi secara terarah tanpa terjebak dalam siklus pengulangan (*cycling*).
-  2. **Simulated Annealing (SA)**: Mengadopsi prinsip pendinginan termodinamika logam dengan probabilitas penerimaan *Metropolis* untuk melompati *local optima* pada suhu tinggi dan melakukan konvergensi halus pada suhu rendah.
+  2. **Flower Pollination Algorithm (FPA)**: Mengadopsi proses penyerbukan biologis bunga di alam ciptaan Xin-She Yang (2012), menggabungkan penyerbukan biotik jarak jauh berbasis *Lévy flight* (eksplorasi global) dan penyerbukan abiotik lokal (eksploitasi lokal) dengan *switch probability* $p = 0.8$.
 
 ---
 
@@ -118,49 +118,53 @@ flowchart TD
 
 ---
 
-## 6. Algoritma 2: Simulated Annealing (SA)
+## 6. Algoritma 2: Flower Pollination Algorithm (FPA)
 
-Simulated Annealing meniru proses pendinginan logam cair menjadi kristal padat dengan energi minimum.
+Flower Pollination Algorithm (FPA) adalah algoritma metaheuristik berbasis populasi yang terinspirasi dari proses penyerbukan bunga di alam ciptaan Xin-She Yang (2012).
 
 ```mermaid
 flowchart TD
-    A["Mulai: Inisialisasi Solusi S0, Suhu T0 = 100, Tmin = 0.05, alpha = 0.95"] --> B["Hitung Energi Awal E = Fitness(S)"]
-    B --> C{"Suhu T > Tmin?"}
-    C -- Ya --> D["Loop Markov Chain (L = 25 langkah)"]
-    D --> E["Perturbasi Solusi: Hasilkan Tetangga S_new"]
-    E --> F["Hitung delta E = Fitness(S_new) - Fitness(S)"]
-    F --> G{"delta E < 0 ? (Solusi Lebih Bagus)"}
-    G -- Ya --> H["Terima S_new secara langsung"]
-    G -- Tidak --> I["Hitung Probabilitas Metropolis: P = exp(-delta E * 100 / T)"]
-    I --> J{"Random(0, 1) < P ?"}
-    J -- Ya --> H
-    J -- Tidak --> K["Pertahankan Solusi Lama"]
-    H --> L["Update Global Best jika rekor baru tercapai"]
-    K --> M{"Selesai L Langkah?"}
-    L --> M
-    M -- Tidak --> D
-    M -- Ya --> N["Cooling Step: T = T * alpha"]
-    N --> C
-    C -- Tidak --> O["Tetapkan Pemetaan Terbaik ke CloudSim"]
+    A["Mulai: Inisialisasi Populasi Bunga (popSize = 20), p = 0.8, gamma = 0.1"] --> B["Evaluasi Fitness Semua Bunga & Tentukan Bunga Terbaik (g*)"]
+    B --> C{"Iterasi <= Max_Iter (80)?"}
+    C -- Ya --> D["Untuk Setiap Bunga i dalam Populasi"]
+    D --> E{"Random(0, 1) < p (0.8) ?"}
+    E -- Ya --> F["Global Pollination (Biotik): Step Lévy Flight L(lambda)"]
+    F --> G["Pollen Bergerak ke Arah Solusi Terbaik Global g*"]
+    E -- Tidak --> H["Local Pollination (Abiotik): Pilih 2 Bunga Acak j dan k"]
+    H --> I["Crossover Lokal: Kombinasi Genetik Bunga j dan k"]
+    G --> J["Evaluasi Fitness Bunga Baru F(x_new)"]
+    I --> J
+    J --> K{"F(x_new) < F(x_i) ? (Greedy Selection)"}
+    K -- Ya --> L["Update Bunga i: x_i = x_new"]
+    K -- Tidak --> M["Pertahankan Posisi Bunga i Lama"]
+    L --> N{"F(x_new) < F(g*) ?"}
+    N -- Ya --> O["Update Rekor Global Best: g* = x_new"]
+    N -- Tidak --> P["Lanjut ke Bunga Berikutnya"]
+    M --> P
+    O --> P
+    P --> Q{"Seluruh Populasi Selesai Dievaluasi?"}
+    Q -- Tidak --> D
+    Q -- Ya --> C
+    C -- Tidak --> R["Tetapkan Pemetaan Bunga Terbaik (g*) ke CloudSim"]
 ```
 
-### Langkah-Langkah Algoritma Simulated Annealing:
-1. **Inisialisasi Parameter**:
-   - Suhu Awal ($T_0$): `100.0`
-   - Suhu Minimum ($T_{min}$): `0.05`
-   - Laju Pendinginan ($\alpha$): `0.95` (*geometric cooling*)
-   - Panjang Rantai Markov ($L$): `25` iterasi per tingkat suhu.
-2. **Perturbasi Solusi**:
-   - Mengubah alokasi satu task pada VM kritis atau menukar dua task antar VM secara acak.
-3. **Kriteria Penerimaan Metropolis**:
-   - Hitung selisih energi: $\Delta E = F(S_{\text{new}}) - F(S_{\text{current}})$.
-   - Jika $\Delta E < 0$ (solusi lebih optimal): **Pasti diterima**.
-   - Jika $\Delta E \ge 0$ (solusi lebih buruk): Diterima dengan probabilitas:
-     $$P = \exp\left(-\frac{\Delta E \times 100}{T}\right) > \text{random}(0, 1)$$
-     *(Memungkinkan algoritma melompat keluar dari jebakan local optima pada suhu awal).*
-4. **Penurunan Suhu**:
-   - Setelah setiap $L$ iterasi, suhu diturunkan: $T_{k+1} = \alpha \times T_k$.
-5. **Kondisi Berhenti**: Suhu mencapai $T < T_{min}$.
+### Karakteristik & Langkah Flower Pollination Algorithm:
+1. **Representasi Bunga**: Tiap bunga merepresentasikan satu vektor solusi penugasan task ke VM $X_i = [vm_0, vm_1, \dots, vm_{N-1}]$. Ukuran populasi: `popSize = 20` bunga.
+2. **Global Pollination (Penyerbukan Biotik Jarak Jauh)**:
+   - Polinator alami (lebah, burung, kelelawar) dapat terbang melintasi jarak jauh (*long-distance jump*).
+   - Pergerakan dimodelkan dengan **Lévy Flights** menggunakan algoritma Mantegna:
+     $$L \sim \frac{u}{|v|^{1/\beta}}, \quad u \sim \mathcal{N}(0, \sigma_u^2), \quad v \sim \mathcal{N}(0, 1), \quad \beta = 1.5$$
+     $$X_i^{t+1} = X_i^t + \gamma \cdot L(\lambda) \cdot (g^* - X_i^t)$$
+     di mana $g^*$ adalah posisi bunga terbaik global saat ini. Pada task scheduling diskrit, ini memandu task untuk mengadopsi alokasi VM dari solusi terbaik global.
+3. **Local Pollination (Penyerbukan Abiotik Mandiri)**:
+   - Terjadi pada jarak dekat tanpa bantuan polinator (misal terbawa hembusan angin atau air).
+   - Dimodelkan melalui interaksi/crossover antara dua bunga acak $X_j$ dan $X_k$ dari populasi yang sama:
+     $$X_i^{t+1} = X_i^t + \epsilon \cdot (X_j^t - X_k^t), \quad \epsilon \in [0, 1]$$
+4. **Switch Probability ($p = 0.8$)**:
+   - Menyeimbangkan antara **eksplorasi global** (80% peluang menggunakan Lévy flight untuk melompat dari local optima) dan **eksploitasi lokal** (20% peluang melakukan penyesuaian halus di sekitar solusi yang ada).
+5. **Greedy Selection**:
+   - Solusi baru $X_{\text{new}}$ hanya akan menggantikan $X_i$ jika nilai fungsi objektifnya $F(X_{\text{new}}) < F(X_i)$. Jika solusi tersebut memecahkan rekor global, $g^*$ diperbarui.
+6. **Kondisi Berhenti**: Batas maksimum generasi `maxIterations = 80` tercapai.
 
 ---
 
@@ -198,7 +202,7 @@ SOKA-metaheurictic/
 │   ├── vm_placement_detail.csv          # Detail spesifikasi per VM
 │   └── grafik/                          # Grafik perbandingan visual TS vs SA (PNG)
 ├── scripts/
-│   └── plot_comparison.py               # Script matplotlib untuk plotting komparasi TS vs SA
+│   └── plot_comparison.py               # Script matplotlib untuk plotting komparasi TS vs FPA
 └── src/main/java/com/cloudsim/meta/
     ├── DatacenterFactory.java           # Setup 2 datacenter & 10 host
     ├── VmFactory.java                   # Setup 16 VM (Compute, Standard, Light)
@@ -208,7 +212,7 @@ SOKA-metaheurictic/
     ├── SchedulingMetrics.java           # Perhitungan metrik standar CloudSim
     ├── SolutionEvaluator.java           # Evaluator fitness analitis cepat
     ├── TabuSearchScheduler.java         # Metaheuristik 1: Tabu Search
-    ├── SimulatedAnnealingScheduler.java # Metaheuristik 2: Simulated Annealing
+    ├── FlowerPollinationScheduler.java  # Metaheuristik 2: Flower Pollination Algorithm
     └── Main.java                        # Entry Point: eksekusi komparasi seluruh dataset
 ```
 
@@ -216,26 +220,23 @@ SOKA-metaheurictic/
 
 ## 9. Cara Menjalankan Simulasi
 
-Prasyarat:
-- Java JDK 8 atau JDK 11 (diuji pada OpenJDK 11).
-- Python 3 dengan pustaka `matplotlib` untuk grafik.
+Prasyarat: Java 8/11 dan Apache Maven.
 
-### Langkah 1: Compile Program (PowerShell)
-```powershell
-if (!(Test-Path "target\classes")) { New-Item -ItemType Directory -Path "target\classes" -Force }
-javac -cp "lib\cloudsim-3.0.3.jar" -d target\classes (Get-ChildItem -Path "src\main\java\com\cloudsim\meta\*.java").FullName
-```
+```bash
+# 1. Compile program
+mvn compile
 
-### Langkah 2: Jalankan Simulasi
-```powershell
-java -cp "target\classes;lib\cloudsim-3.0.3.jar" com.cloudsim.meta.Main
-```
+# 2. Jalankan simulasi (Main.java)
+mvn exec:java
 
-### Langkah 3: Hasilkan Grafik Komparasi
-```powershell
+# 3. Hasilkan grafik perbandingan (TS vs FPA)
 python scripts/plot_comparison.py
 ```
-Grafik visual akan tersimpan di folder `results/grafik/` dalam format PNG beresolusi tinggi.
+Hasil simulasi CSV akan tersimpan di folder `results/` dan grafik PNG di `results/grafik/`.
+
+> [!TIP]
+> **Cara Singkat di Windows (tanpa install Maven)**:  
+> Cukup ketik `.\compile.bat` untuk compile dan `.\run.bat` untuk menjalankan simulasi.
 
 ---
 
@@ -244,11 +245,11 @@ Grafik visual akan tersimpan di folder `results/grafik/` dalam format PNG bereso
 Gunakan panduan berikut sebagai acuan penyusunan slide presentasi kelompok:
 
 * **Slide 1: Judul Presentasi**
-  - Judul: *Optimasi Task Scheduling Komputasi Awan Heterogen: Komparasi Metaheuristik Tabu Search (TS) vs Simulated Annealing (SA) Menggunakan CloudSim*
+  - Judul: *Optimasi Task Scheduling Komputasi Awan Heterogen: Komparasi Metaheuristik Tabu Search (TS) vs Flower Pollination Algorithm (FPA) Menggunakan CloudSim*
   - Nama Anggota Kelompok & Mata Kuliah Sistem Komputasi Awan (SOKA).
 * **Slide 2: Problem Statement & Latar Belakang**
   - Tantangan penjadwalan task independen pada VM heterogen dengan spesifikasi dan tarif sewa berbeda.
-  - Alasan memilih Metaheuristik: Mampu menyelesaikan masalah optimasi kombinatorial NP-hard dengan fungsi objektif multi-kriteria secara efektif.
+  - Alasan memilih Metaheuristik: Menyelesaikan masalah NP-hard task scheduling multi-objective secara efisien.
 * **Slide 3: Arsitektur Cloud & Fungsi Objektif**
   - Datacenter dengan 10 Host dan 16 VM (Compute-Intensive, Standard, Light-weight).
   - Bi-Objective Fitness Function: Menyeimbangkan waktu selesai (*Makespan*) dan efisiensi biaya sewa VM (*Total Cost*):
@@ -258,24 +259,25 @@ Gunakan panduan berikut sebagai acuan penyusunan slide presentasi kelompok:
   - Neighborhood moves: Critical VM Move (mengatasi bottleneck), Cost Move (mengurangi biaya), dan Swap Move.
   - Memori Tabu: Tabu List berukuran `tenure = 15` iterasi untuk mencegah perulangan (*cycling*).
   - *Aspiration Criterion*: Memperbolehkan langkah tabu jika menghasilkan rekor baru (*Global Best*).
-* **Slide 5: Langkah Algoritma 2 — Simulated Annealing (SA)**
-  - Parameter: Suhu awal $T_0 = 100.0$, laju pendinginan $\alpha = 0.95$, suhu minimum $T_{min} = 0.05$.
-  - Panjang rantai Markov $L = 25$ iterasi per tingkat suhu.
-  - Perturbasi acak dan Kriteria Penerimaan Metropolis ($P = \exp(-\Delta E / T)$) untuk melompati *local optima*.
+* **Slide 5: Langkah Algoritma 2 — Flower Pollination Algorithm (FPA)**
+  - Inspirasi biologis: Penyerbukan bunga di alam ciptaan Xin-She Yang (2012).
+  - Global Pollination (Biotik): Eksplorasi jarak jauh menggunakan **Lévy Flights** berbasis Mantegna's algorithm menuju bunga terbaik global ($g^*$).
+  - Local Pollination (Abiotik): Eksploitasi lokal antar bunga acak dengan probabilitas pergantian (*switch probability*) $p = 0.8$.
+  - Greedy selection: Pembaruan posisi bunga jika solusi baru menghasilkan fitness lebih baik.
 * **Slide 6: Dataset & Skenario Pengujian**
   - Dataset nyata GoCJ (Google Cloud Jobs, 100–1.000 task).
   - Dataset sintetik 30/40/30 (Kecil, Sedang, Besar, hingga 10.000 task).
   - Masing-masing dataset dijalankan 3 kali (*repeats*) untuk memvalidasi stabilitas performa.
-* **Slide 7: Analisis Komparasi — Makespan & Throughput (TS vs SA)**
+* **Slide 7: Analisis Komparasi — Makespan & Throughput (TS vs FPA)**
   - Tampilkan grafik `komparasi_makespan.png` dan `komparasi_throughput.png`.
-  - Analisis: Tabu Search cenderung menghasilkan Makespan sedikit lebih cepat pada dataset berukuran kecil–sedang karena eksplorasi terfokus pada VM *bottleneck*. Pada ukuran masif, kedua algoritma menunjukkan konvergensi yang sangat kompetitif.
-* **Slide 8: Analisis Komparasi — Total Cost & Resource Utilization (TS vs SA)**
+  - Analisis: Tabu Search cenderung menghasilkan Makespan yang sangat kompetitif melalui pemindahan terfokus pada VM kritis, sementara FPA mampu mengejar kualitas makespan secara stabil berkat lompatan Lévy flights.
+* **Slide 8: Analisis Komparasi — Total Cost & Resource Utilization (TS vs FPA)**
   - Tampilkan grafik `komparasi_total_cost.png` dan `komparasi_utilization.png`.
-  - Analisis: Tabu Search dan Simulated Annealing sama-sama mampu mempertahankan pemanfaatan CPU tinggi (>97–99%), dengan Simulated Annealing sering kali menemukan konfigurasi biaya sewa yang sangat ekonomis melalui penerimaan solusi probabilistik.
+  - Analisis: FPA dan TS sama-sama mencapai pemanfaatan CPU tinggi (>97–99%), dengan FPA efektif dalam menyeimbangkan alokasi task ke VM berbiaya rendah melalui crossover penyerbukan lokal.
 * **Slide 9: Analisis Komparasi — Degree of Imbalance & Waktu Konvergensi (Scheduling Time)**
   - Tampilkan grafik `komparasi_imbalance.png` dan `komparasi_scheduling_time.png`.
-  - Analisis: Tabu Search unggul dalam keseimbangan beban (Degree of Imbalance lebih rendah mendekati 0), sementara Simulated Annealing menawarkan waktu komputasi penjadwalan yang sangat konsisten di setiap siklus pendinginan.
+  - Analisis: Tabu Search unggul dalam kestabilan Degree of Imbalance mendekati 0, sementara FPA menawarkan kecepatan konvergensi populasi yang stabil di tiap generasi.
 * **Slide 10: Kesimpulan & Rekomendasi**
-  - Karakteristik TS: Sangat kuat dalam *intensification* (perbaikan lokal terarah pada VM kritis).
-  - Karakteristik SA: Sangat kuat dalam *diversification* (menjelajahi ruang solusi yang luas tanpa mudah terjebak).
-  - Rekomendasi implementasi pada sistem cloud nyata berdasarkan karakteristik beban kerja.
+  - Karakteristik TS: Berbasis *single-solution trajectory search* dengan memori tabu yang kuat pada perbaikan lokal terarah (*intensification*).
+  - Karakteristik FPA: Berbasis *population-based swarm search* yang kuat dalam eksplorasi global luas (*diversification*) melalui Lévy flight.
+  - Rekomendasi skenario penggunaan TS vs FPA di lingkungan produksi cloud.
