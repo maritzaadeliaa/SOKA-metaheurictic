@@ -1,0 +1,11 @@
+host_id,grade,total_vm,compute_intensive,standard,light_weight
+0,High grade,4,1,2,1
+1,High grade,4,1,2,1
+2,High grade,4,1,1,2
+3,High grade,4,1,1,2
+4,Low grade,0,0,0,0
+5,Low grade,0,0,0,0
+6,Low grade,0,0,0,0
+7,Low grade,0,0,0,0
+8,Low grade,0,0,0,0
+9,Low grade,0,0,0,0

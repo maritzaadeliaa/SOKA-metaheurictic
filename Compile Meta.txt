@@ -1,0 +1,9 @@
+Langkah 1: Compile Program
+if (!(Test-Path "target\classes")) { New-Item -ItemType Directory -Path "target\classes" -Force }
+javac -cp "lib\cloudsim-3.0.3.jar" -d target\classes (Get-ChildItem -Path "src\main\java\com\cloudsim\meta\*.java").FullName
+
+Langkah 2: Jalankan Program Utama (Main.java)
+java -cp "target\classes;lib\cloudsim-3.0.3.jar" com.cloudsim.meta.Main
+
+Langkah 3: Hasilkan Grafik Analisis Perbandingan (TS vs SA)
+python scripts/plot_comparison.py

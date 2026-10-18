@@ -1,0 +1,17 @@
+vm_id,vm_type,vcpu,mips_per_vcpu,ram_mb,bw_mbps,cost_per_s,host_id,host_grade
+0,Compute-Intensive,2,2500,8192,1000,150,0,High grade
+1,Compute-Intensive,2,2500,8192,1000,150,1,High grade
+2,Compute-Intensive,2,2500,8192,1000,150,2,High grade
+3,Compute-Intensive,2,2500,8192,1000,150,3,High grade
+4,Standard,1,1500,4096,250,40,0,High grade
+5,Standard,1,1500,4096,250,40,1,High grade
+6,Standard,1,1500,4096,250,40,2,High grade
+7,Standard,1,1500,4096,250,40,3,High grade
+8,Standard,1,1500,4096,250,40,0,High grade
+9,Standard,1,1500,4096,250,40,1,High grade
+10,Light-weight,1,800,2048,250,18,2,High grade
+11,Light-weight,1,800,2048,250,18,3,High grade
+12,Light-weight,1,800,2048,250,18,0,High grade
+13,Light-weight,1,800,2048,250,18,1,High grade
+14,Light-weight,1,800,2048,250,18,2,High grade
+15,Light-weight,1,800,2048,250,18,3,High grade
