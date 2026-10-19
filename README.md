@@ -225,9 +225,14 @@ Prasyarat: Java 8/11 dan Apache Maven.
 ```bash
 # 1. Compile program
 mvn compile
+///
+.\compile.bat
+
 
 # 2. Jalankan simulasi (Main.java)
 mvn exec:java
+///
+.\run.bat
 
 # 3. Hasilkan grafik perbandingan (TS vs FPA)
 python scripts/plot_comparison.py
