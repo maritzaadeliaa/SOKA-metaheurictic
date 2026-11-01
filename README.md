@@ -187,61 +187,57 @@ Hasil simulasi CloudSim diukur secara seragam menggunakan 6 metrik utama:
 
 ```text
 SOKA-metaheurictic/
-├── Compile Meta.txt                     # Petunjuk compile & eksekusi cepat
-├── pom.xml                              # Konfigurasi Maven & CloudSim
-├── lib/
-│   └── cloudsim-3.0.3.jar               # Library simulator CloudSim
+├── main.py                              # Entry Point utama: eksekusi simulasi seluruh dataset
+├── run.bat                              # Script eksekusi 1-klik di Windows (python main.py)
+├── requirements.txt                     # Dependensi Python (matplotlib, numpy)
 ├── data/
 │   ├── GoCJ_Dataset_100.txt ... 1000.txt# Dataset Google Cloud Jobs
 │   └── synthetic/                       # Dataset sintetik 30/40/30 (100 - 10.000 task)
 ├── results/
-│   ├── hasil_komparasi.csv              # Rangkuman rata-rata 3 run (Tabu Search vs Simulated Annealing)
+│   ├── hasil_komparasi.csv              # Rangkuman rata-rata 3 run (Tabu Search vs FPA)
 │   ├── hasil_komparasi_runs.csv         # Data mentah setiap run
 │   ├── dataset_stats.csv                # Statistik panjang task per dataset
 │   ├── host_vm_placement.csv            # Pemetaan alokasi VM ke Host
 │   ├── vm_placement_detail.csv          # Detail spesifikasi per VM
-│   └── grafik/                          # Grafik perbandingan visual TS vs SA (PNG)
+│   └── grafik/                          # Grafik perbandingan visual TS vs FPA (PNG)
 ├── scripts/
 │   └── plot_comparison.py               # Script matplotlib untuk plotting komparasi TS vs FPA
-└── src/main/java/com/cloudsim/meta/
-    ├── DatacenterFactory.java           # Setup 2 datacenter & 10 host
-    ├── VmFactory.java                   # Setup 16 VM (Compute, Standard, Light)
-    ├── CloudletGenerator.java           # Parser file dataset menjadi Cloudlet
-    ├── DatasetGenerator.java            # Generator dataset sintetik 30/40/30
-    ├── DatasetStats.java                # Statistik deskriptif dataset
-    ├── SchedulingMetrics.java           # Perhitungan metrik standar CloudSim
-    ├── SolutionEvaluator.java           # Evaluator fitness analitis cepat
-    ├── TabuSearchScheduler.java         # Metaheuristik 1: Tabu Search
-    ├── FlowerPollinationScheduler.java  # Metaheuristik 2: Flower Pollination Algorithm
-    └── Main.java                        # Entry Point: eksekusi komparasi seluruh dataset
+├── docs/                                # Slide Presentasi HTML Interaktif (GitHub Pages)
+│   ├── index.html                       # Player slide presentasi
+│   ├── css/style.css                    # Tema gelap & style 16:9
+│   └── js/                              # Script slide, engine, dan toy-problem
+└── src/
+    ├── __init__.py                      # Package marker
+    ├── models.py                        # Model Host, VM, dan Cloudlet
+    ├── evaluator.py                     # Evaluator fitness analitis cepat (< 0.05 ms)
+    ├── tabu_search.py                   # Metaheuristik 1: Tabu Search (TS)
+    ├── flower_pollination.py            # Metaheuristik 2: Flower Pollination Algorithm (FPA)
+    ├── metrics.py                       # Perhitungan metrik evaluasi penjadwalan
+    ├── cloudlet.py                      # Parser file dataset menjadi task Cloudlet
+    ├── dataset_generator.py             # Generator dataset sintetik 30/40/30
+    └── dataset_stats.py                 # Statistik deskriptif dataset
 ```
 
 ---
 
 ## 9. Cara Menjalankan Simulasi
 
-Prasyarat: Java 8/11 dan Apache Maven.
+Prasyarat: Python 3.8+ dan library yang tercantum di `requirements.txt`.
 
 ```bash
-# 1. Compile program
-mvn compile
-///
-.\compile.bat
+# 1. Install dependensi (opsional jika sudah ada matplotlib & numpy)
+pip install -r requirements.txt
 
-
-# 2. Jalankan simulasi (Main.java)
-mvn exec:java
-///
-.\run.bat
-
-# 3. Hasilkan grafik perbandingan (TS vs FPA)
-python scripts/plot_comparison.py
+# 2. Jalankan simulasi komparasi lengkap
+python main.py
+>>>>>>> 626455e (update tugas)
 ```
-Hasil simulasi CSV akan tersimpan di folder `results/` dan grafik PNG di `results/grafik/`.
+
+Hasil simulasi CSV otomatis tersimpan di folder `results/` dan grafik perbandingan visual (PNG) otomatis diperbarui di `results/grafik/`.
 
 > [!TIP]
-> **Cara Singkat di Windows (tanpa install Maven)**:  
-> Cukup ketik `.\compile.bat` untuk compile dan `.\run.bat` untuk menjalankan simulasi.
+> **Cara Singkat di Windows**:  
+> Cukup klik dua kali atau ketik `.\run.bat` di terminal untuk menjalankan simulasi secara langsung.
 
 ---
 

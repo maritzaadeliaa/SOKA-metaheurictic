@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<!--
+============================================================================
+SOKA-metaheurictic: Slide Presentation Framework
+File    : index.html
+Pemilik : [Orang 1]
+Tujuan  : Main HTML Entry Point untuk GitHub Pages & Slide Player
+============================================================================
+-->
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SOKA: Tabu Search vs Flower Pollination Algorithm | Task Scheduling</title>
+  <meta name="description" content="Presentasi Animasi Step-by-Step Komparasi Metaheuristik Tabu Search vs Flower Pollination Algorithm untuk Task Scheduling pada CloudSim 3.0.3">
+  
+  <!-- Font Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet Utama [Orang 1] -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="presentation-app">
+    <!-- Top Header Bar -->
+    <header class="top-bar">
+      <div class="brand-section">
+        <span class="course-badge">SOKA</span>
+        <div class="slide-meta">
+          <span id="slide-title" class="slide-title-header">Memuat Slide...</span>
+          <span id="step-badge" class="step-badge">Langkah 1/1</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <span id="slide-counter" class="slide-counter">1 / 1</span>
+        <button id="btn-fullscreen" class="fullscreen-btn" title="Layar Penuh" onclick="toggleFullScreen()">⛶ Fullscreen</button>
+      </div>
+    </header>
+
+    <!-- Global Progress Bar -->
+    <div class="progress-bar-track">
+      <div id="progress-bar-fill" class="progress-bar-fill"></div>
+    </div>
+
+    <!-- 16:9 Presentation Viewport & Auto-Scaling Stage -->
+    <main id="slide-viewport">
+      <div id="slide-stage">
+        <div id="slide-container">
+          <!-- Konten slide di-render secara dinamis oleh engine.js -->
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Navigation Toolbar -->
+    <footer class="bottom-nav">
+      <div class="nav-group">
+        <button id="btn-prev" class="nav-btn" title="Langkah Sebelumnya (Panah Kiri)">
+          ◀ <span class="nav-label">Sebelumnya</span>
+        </button>
+        <button id="btn-reset" class="nav-btn" title="Reset Slide ke Langkah Awal (R)">
+          ↺ <span class="nav-label">Reset</span>
+        </button>
+        <button id="btn-play" class="nav-btn" title="Putar Otomatis tiap 1.5 detik (P)">
+          ▶ <span class="nav-label">Play</span>
+        </button>
+      </div>
+
+      <div class="kbd-hints">
+        <span>Navigasi:</span>
+        <span class="kbd">←</span>
+        <span class="kbd">→</span>
+        <span class="kbd">Spasi</span>
+        <span style="margin: 0 4px;">|</span>
+        <span>Auto-Play:</span>
+        <span class="kbd">P</span>
+        <span style="margin: 0 4px;">|</span>
+        <span>Reset:</span>
+        <span class="kbd">R</span>
+      </div>
+
+      <div class="nav-group">
+        <button id="btn-next" class="nav-btn primary" title="Langkah Berikutnya (Panah Kanan / Spasi)">
+          <span class="nav-label">Selanjutnya</span> ▶
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Fullscreen Toggle Script -->
+  <script>
+    function toggleFullScreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(err => {
+          console.warn(`Error mengaktifkan fullscreen: ${err.message}`);
+        });
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        }
+      }
+    }
+  </script>
+
+  <!--
+    URUTAN PEMANGGILAN SCRIPT WAJIB (10 SLIDE FINAL):
+    1. engine.js          [O1] Framework Engine
+    2. toy-problem.js     [O1] Kasus Mini Bersama
+    3. slides-intro.js    [O1] Slide 1 (Judul) & Slide 2 (Problem & Objektif)
+    4. slides-arch.js     [O4] Slide 3 (Arsitektur Cloud & Dataset)
+    5. slides-tabu.js     [O2] Slide 4 (TS A) & Slide 5 (TS B)
+    6. slides-fpa.js      [O3] Slide 6 (FPA A) & Slide 7 (FPA B)
+    7. charts.js          [O4] Helper Visualisasi Grafik
+    8. slides-compare.js  [O4] Slide 8 (Studi Kasus) & Slide 9 (Komparasi)
+    9. slides-end.js      [O1] Slide 10 (Kesimpulan)
+  -->
+  <script src="js/engine.js"></script>
+  <script src="js/toy-problem.js"></script>
+  <script src="js/slides-intro.js"></script>
+  <script src="js/slides-arch.js"></script>
+  <script src="js/slides-tabu.js"></script>
+  <script src="js/slides-fpa.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/slides-compare.js"></script>
+  <script src="js/slides-end.js"></script>
+
+  <!-- Inisialisasi Slides Engine setelah semua file terdaftar -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      Slides.init();
+    });
+  </script>
+</body>
+</html>

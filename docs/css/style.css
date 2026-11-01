@@ -1,0 +1,607 @@
+/**
+ * ============================================================================
+ * SOKA-metaheurictic: Slide Presentation Framework
+ * File    : css/style.css
+ * Pemilik : [Orang 1]
+ * Tujuan  : Tema Gelap, Variabel Desain, Animasi & Layout 16:9 Presisi
+ * ============================================================================
+ */
+
+/* ==========================================================================
+   1. VARIABEL WARNA & TEMA GLOBAL
+   ========================================================================== */
+:root {
+  /* Latar Belakang & Panel Gelap Elegan */
+  --bg-app: #080c14;
+  --bg-stage: #0f172a;
+  --bg-panel: rgba(30, 41, 59, 0.7);
+  --bg-panel-hover: rgba(51, 65, 85, 0.8);
+  --bg-card: #1e293b;
+  --border-subtle: rgba(148, 163, 184, 0.15);
+  --border-glow: rgba(99, 102, 241, 0.3);
+
+  /* Tipografi */
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --text-dim: #64748b;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+
+  /* Satu Warna per Algoritma */
+  --color-ts: #f59e0b;          /* Tabu Search: Amber Gold */
+  --color-ts-rgb: 245, 158, 11;
+  --color-ts-glow: rgba(245, 158, 11, 0.35);
+
+  --color-fpa: #ec4899;         /* Flower Pollination: Floral Pink */
+  --color-fpa-rgb: 236, 72, 153;
+  --color-fpa-glow: rgba(236, 72, 153, 0.35);
+
+  /* Satu Warna per Jenis VM */
+  --color-vm-compute: #ef4444;  /* Compute-Intensive (2500 MIPS, 150 G$/s): Coral Red */
+  --color-vm-compute-rgb: 239, 68, 68;
+  --color-vm-compute-glow: rgba(239, 68, 68, 0.35);
+
+  --color-vm-standard: #3b82f6; /* Standard (1500 MIPS, 40 G$/s): Bright Blue */
+  --color-vm-standard-rgb: 59, 130, 246;
+  --color-vm-standard-glow: rgba(59, 130, 246, 0.35);
+
+  --color-vm-light: #10b981;    /* Light-weight (800 MIPS, 18 G$/s): Emerald Green */
+  --color-vm-light-rgb: 16, 185, 129;
+  --color-vm-light-glow: rgba(16, 185, 129, 0.35);
+
+  /* Status & Aksen */
+  --color-primary: #6366f1;
+  --color-primary-rgb: 99, 102, 241;
+  --color-accent: #8b5cf6;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+  --color-success: #10b981;
+}
+
+/* ==========================================================================
+   2. RESET & LAYOUT UTAMA
+   ========================================================================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: var(--font-family);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#presentation-app {
+  display: flex;
+  flex-direction: column;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+  background: radial-gradient(circle at 50% 20%, #172554 0%, #0a0f1d 60%, #05070d 100%);
+}
+
+/* ==========================================================================
+   3. TOP BAR & NAVIGASI HEADER
+   ========================================================================== */
+.top-bar {
+  height: 52px;
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border-subtle);
+  z-index: 50;
+}
+
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.course-badge {
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 4px 10px;
+  border-radius: 6px;
+  text-transform: uppercase;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.4);
+}
+
+.slide-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.slide-title-header {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-main);
+  white-space: nowrap;
+}
+
+.step-badge {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-ts);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.slide-counter {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-muted);
+  background: rgba(30, 41, 59, 0.6);
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-subtle);
+}
+
+.fullscreen-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  transition: all 0.2s ease;
+}
+
+.fullscreen-btn:hover {
+  color: var(--text-main);
+  background: rgba(51, 65, 85, 0.6);
+  border-color: var(--text-muted);
+}
+
+/* ==========================================================================
+   4. PROGRESS BAR GLOBAL
+   ========================================================================== */
+.progress-bar-track {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  position: relative;
+  z-index: 55;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #6366f1, #ec4899, #f59e0b);
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+}
+
+/* ==========================================================================
+   5. VIEWPORT & 16:9 AUTO-SCALING STAGE
+   ========================================================================== */
+#slide-viewport {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 12px;
+}
+
+#slide-stage {
+  width: 1280px;
+  height: 720px;
+  min-width: 1280px;
+  min-height: 720px;
+  transform-origin: center center;
+  background: var(--bg-stage);
+  border-radius: 16px;
+  border: 1px solid var(--border-subtle);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 40px rgba(99, 102, 241, 0.1);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  position: relative;
+}
+
+#slide-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==========================================================================
+   6. BOTTOM NAVIGATION TOOLBAR
+   ========================================================================== */
+.bottom-nav {
+  height: 56px;
+  min-height: 56px;
+  background: rgba(15, 23, 42, 0.9);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  z-index: 50;
+}
+
+.nav-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-btn {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  padding: 7px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.nav-btn:hover {
+  background: rgba(51, 65, 85, 0.9);
+  border-color: rgba(148, 163, 184, 0.35);
+  transform: translateY(-1px);
+}
+
+.nav-btn:active {
+  transform: translateY(0);
+}
+
+.nav-btn.primary {
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  border-color: rgba(99, 102, 241, 0.6);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(79, 70, 229, 0.35);
+}
+
+.nav-btn.primary:hover {
+  background: linear-gradient(135deg, #4338ca, #4f46e5);
+  box-shadow: 0 4px 14px rgba(79, 70, 229, 0.5);
+}
+
+.nav-btn.playing {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+}
+
+.kbd-hints {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-dim);
+  font-size: 12px;
+}
+
+.kbd {
+  background: rgba(30, 41, 59, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   7. ANIMASI DASAR (Fade, Slide, Pulse, Highlight)
+   ========================================================================== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.5);
+  }
+}
+
+@keyframes highlightPop {
+  0% { transform: scale(0.95); opacity: 0; }
+  70% { transform: scale(1.03); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shakeX {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  75% { transform: translateX(4px); }
+}
+
+.fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
+
+.fade-out {
+  animation: fadeOut 0.3s ease-in forwards;
+}
+
+.slide-up {
+  animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.slide-in {
+  animation: slideInRight 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.pulse {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+.highlight {
+  animation: highlightPop 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ==========================================================================
+   8. ELEMEN KONTEN SLIDE STANDAR & TIPOGRAFI BESAR
+   ========================================================================== */
+.slide-content {
+  width: 100%;
+  height: 100%;
+  padding: 40px 56px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 10;
+}
+
+.slide-header-box {
+  margin-bottom: 24px;
+}
+
+.slide-category {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--color-primary);
+  margin-bottom: 6px;
+}
+
+.slide-heading {
+  font-size: 32px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--text-main);
+}
+
+.slide-subheading {
+  font-size: 17px;
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+/* Layout 2 Kolom Elegan */
+.split-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  flex: 1;
+  align-items: center;
+}
+
+.col-left, .col-right {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Kartu Informasi & Metric Pill */
+.glass-card {
+  background: rgba(30, 41, 59, 0.6);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 20px 24px;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  background: rgba(30, 41, 59, 0.85);
+  border-color: rgba(148, 163, 184, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ==========================================================================
+   9. STUB SLIDE PLACEHOLDER (Orang 2, 3, 4)
+   ========================================================================== */
+.stub-slide {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 60px;
+}
+
+.stub-badge {
+  display: inline-block;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #a5b4fc;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 16px;
+  border-radius: 30px;
+  margin-bottom: 16px;
+}
+
+.stub-badge.badge-ts {
+  background: var(--color-ts-glow);
+  border-color: var(--color-ts);
+  color: #fde68a;
+}
+
+.stub-badge.badge-fpa {
+  background: var(--color-fpa-glow);
+  border-color: var(--color-fpa);
+  color: #fbcfe8;
+}
+
+.stub-title {
+  font-size: 34px;
+  font-weight: 800;
+  margin-bottom: 24px;
+  color: var(--text-main);
+}
+
+.stub-box {
+  background: rgba(30, 41, 59, 0.5);
+  border: 1px dashed rgba(148, 163, 184, 0.3);
+  border-radius: 16px;
+  padding: 40px 60px;
+  max-width: 680px;
+}
+
+.stub-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.stub-text {
+  font-size: 18px;
+  color: var(--text-main);
+  margin-bottom: 8px;
+}
+
+.stub-subtext {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+
+.chart-stub-container {
+  padding: 30px;
+  text-align: center;
+  border: 1px dashed var(--border-subtle);
+  border-radius: 12px;
+  background: rgba(15, 23, 42, 0.4);
+}
+
+.chart-stub-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin-bottom: 6px;
+}
+
+.chart-stub-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ==========================================================================
+   10. KOMPONEN TOY PROBLEM & SVG STYLING
+   ========================================================================== */
+.toy-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.toy-metrics-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 12px 20px;
+  margin-top: 14px;
+}
+
+.metric-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 600;
+}
+
+.metric-val {
+  font-size: 22px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--text-main);
+  margin-top: 2px;
+}
+
+.metric-val.makespan { color: #38bdf8; }
+.metric-val.cost { color: #f87171; }
+.metric-val.fitness { color: #fbbf24; }
