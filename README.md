@@ -225,12 +225,22 @@ SOKA-metaheurictic/
 Prasyarat: Python 3.8+ dan library yang tercantum di `requirements.txt`.
 
 ```bash
-# 1. Install dependensi (opsional jika sudah ada matplotlib & numpy)
+# 1. Clone repository
+git clone https://github.com/USERNAMEmaritzaadeliaa/SOKA-metaheuristic.git
+cd SOKA-metaheuristic
+
+# 2. Install dependency
 pip install -r requirements.txt
 
-# 2. Jalankan simulasi komparasi lengkap
+# 3. Menjalankan Program
 python main.py
->>>>>>> 626455e (update tugas)
+
+# 4. Menjalankan Visualisasi Hasil
+python scripts/plot_comparison.py
+
+# Menjalankan Web Interface
+cd docs
+python -m http.server 8000 --bind 127.0.0.1
 ```
 
 Hasil simulasi CSV otomatis tersimpan di folder `results/` dan grafik perbandingan visual (PNG) otomatis diperbarui di `results/grafik/`.
