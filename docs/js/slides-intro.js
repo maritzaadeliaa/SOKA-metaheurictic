@@ -34,22 +34,26 @@ Slides.register({
               Komparasi Metaheuristik <strong style="color: var(--color-ts);">Tabu Search (TS)</strong> vs <strong style="color: var(--color-fpa);">Flower Pollination Algorithm (FPA)</strong>
             </p>
 
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; width: 100%; max-width: 880px;">
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; width: 100%; max-width: 880px;">
               <div class="glass-card" style="padding: 14px; text-align: center; border-top: 3px solid #6366f1;">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Orang 1</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">[Nama 1]</div>
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">5027231076</div>
+                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">Syela Zeruya Tandi Lalong</div>
               </div>
               <div class="glass-card" style="padding: 14px; text-align: center; border-top: 3px solid var(--color-ts);">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Orang 2</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">[Nama 2]</div>
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">5027241047</div>
+                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">Jonathan Zelig Sutopo</div>
               </div>
               <div class="glass-card" style="padding: 14px; text-align: center; border-top: 3px solid var(--color-fpa);">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Orang 3</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">[Nama 3]</div>
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">5027241085</div>
+                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">Ahmad Syauqi Reza</div>
               </div>
               <div class="glass-card" style="padding: 14px; text-align: center; border-top: 3px solid #10b981;">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">Orang 4</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">[Nama 4]</div>
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">5027241111</div>
+                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">Maritza Adelia Sucipto</div>
+              </div>
+              <div class="glass-card" style="padding: 14px; text-align: center; border-top: 3px solid #14B8A6;">
+                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">5027241117</div>
+                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">Adinda Cahya Pramesti</div>
               </div>
             </div>
           </div>
@@ -181,7 +185,7 @@ Slides.register({
                 <h2 class="slide-heading" style="font-size: 26px;">Trade-off Makespan vs Cost: Minimize F(S)</h2>
                 <p class="slide-subheading" style="font-size: 14px;">Titik solusi diarahkan menuju pojok kiri-bawah (Utopian Point).</p>
               </div>
-              <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(251, 191, 36, 0.4); padding: 8px 18px; border-radius: 8px; font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: #fbbf24;">
+              <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(251, 191, 36, 0.4); padding: 8px 18px; border-radius: 8px; font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: #fbbf24; transform: translateY(20px);">
                 F(S) = 0.5 · (Makespan / RefM) + 0.5 · (Cost / RefC)
               </div>
             </div>
