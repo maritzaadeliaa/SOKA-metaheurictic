@@ -362,22 +362,38 @@
       svgContainer.appendChild(makespanLine);
       svgContainer.appendChild(makespanTag);
 
-      // Header Bar Evaluasi Fitness di Atas
+      // Header Bar Evaluasi Fitness di Atas (Tata letak 2 baris terpisah vertikal, tidak mungkin bertabrakan)
       const topBar = svg.group();
-      const topTitle = svg.text(28, 42, options.title || 'Alokasi Task & Evaluasi Beban VM', {
+      
+      // Baris 1: Judul Diagram (kiri atas)
+      const topTitle = svg.text(28, 30, options.title || 'Alokasi Task & Evaluasi Beban VM', {
         fill: '#f8fafc',
-        'font-size': 18,
+        'font-size': 15,
         'font-weight': 800
       });
 
-      // Metric Pills (Makespan, Cost, Fitness)
-      const metricsText = `Makespan: ${evalRes.makespan.toFixed(1)}s  |  Biaya: ${evalRes.cost.toFixed(0)} G$  |  Fitness F(S): ${evalRes.fitness.toFixed(4)}`;
-      const metricsPill = svg.text(width - 28, 42, metricsText, {
+      // Baris 2: Badge Metrik Kuning (Y = 46, di bawah judul)
+      const metricsText = `Makespan: ${evalRes.makespan.toFixed(1)}s   |   Biaya: ${evalRes.cost.toFixed(0)} G$   |   Fitness F(S): ${evalRes.fitness.toFixed(4)}`;
+      
+      const badgeW = 440;
+      const badgeH = 24;
+      const badgeX = 24;
+      const badgeY = 44;
+
+      const badgeBg = svg.rect(badgeX, badgeY, badgeW, badgeH, {
+        fill: 'rgba(245, 158, 11, 0.12)',
+        stroke: 'rgba(245, 158, 11, 0.4)',
+        'stroke-width': 1,
+        rx: 6
+      });
+      topBar.appendChild(badgeBg);
+
+      const metricsPill = svg.text(badgeX + 14, badgeY + 16, metricsText, {
         fill: '#fbbf24',
-        'font-size': 14,
+        'font-size': 12,
         'font-family': 'var(--font-mono, monospace)',
         'font-weight': 700,
-        'text-anchor': 'end'
+        'text-anchor': 'start'
       });
 
       topBar.appendChild(topTitle);

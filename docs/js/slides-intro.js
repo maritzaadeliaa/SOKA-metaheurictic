@@ -8,7 +8,7 @@
  */
 
 /* ==========================================================================
-   SLIDE 1: JUDUL PRESENTASI (1 Step, Fade Masuk)
+   SLIDE 1: JUDUL PRESENTASI (1 Step, Staggered Intro Animation)
    ========================================================================== */
 Slides.register({
   id: 'slide-1',
@@ -18,42 +18,46 @@ Slides.register({
       label: 'Metaheuristik pada Task Scheduling - Kelompok 3',
       enter(ctx) {
         ctx.root.innerHTML = `
-          <div class="slide-content fade-in" style="justify-content: center; align-items: center; text-align: center;">
-            <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+          <div class="slide-content" style="justify-content: center; align-items: center; text-align: center;">
+            <!-- Badge row -->
+            <div class="intro-stagger-1" style="display: flex; gap: 12px; margin-bottom: 24px; justify-content: center; flex-wrap: wrap;">
               <span class="course-badge">Sistem Komputasi Awan (SOKA)</span>
-              <span style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4); color: #a5b4fc; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 6px;">
+              <span style="background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.4); color: #a5b4fc; font-size: clamp(10px, 1.2vw, 12px); font-weight: 600; padding: 6px 14px; border-radius: 6px;">
                 Task Scheduling Metaheuristics
               </span>
             </div>
 
-            <h1 style="font-size: 44px; font-weight: 900; line-height: 1.25; max-width: 980px; margin-bottom: 20px; background: linear-gradient(135deg, #ffffff 30%, #94a3b8 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+            <!-- Title -->
+            <h1 class="intro-stagger-2 intro-title-shimmer" style="font-size: clamp(28px, 3.5vw, 44px); font-weight: 900; line-height: 1.25; max-width: 980px; margin-bottom: 20px;">
               Optimasi Task Scheduling Komputasi Awan Heterogen
             </h1>
 
-            <p style="font-size: 22px; font-weight: 500; color: #cbd5e1; max-width: 860px; margin-bottom: 40px;">
+            <!-- Subtitle -->
+            <p class="intro-stagger-3" style="font-size: clamp(16px, 1.8vw, 22px); font-weight: 500; color: #cbd5e1; max-width: 860px; margin-bottom: 40px;">
               Komparasi Metaheuristik <strong style="color: var(--color-ts);">Tabu Search (TS)</strong> vs <strong style="color: var(--color-fpa);">Flower Pollination Algorithm (FPA)</strong>
             </p>
 
-            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; width: 100%; max-width: 880px;">
-              <div class="glass-card" style="padding: 14px; text-align: center; border-top: 3px solid #6366f1;">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">5027231076</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">Syela Zeruya Tandi Lalong</div>
+            <!-- Member cards grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: clamp(8px, 1.2vw, 16px); width: 100%; max-width: 880px;">
+              <div class="glass-card intro-member-card intro-stagger-4" style="border-top: 3px solid #6366f1; --card-idx: 0;">
+                <div style="font-size: clamp(9px, 1vw, 11px); color: var(--text-muted); text-transform: uppercase;">5027231076</div>
+                <div style="font-size: clamp(13px, 1.3vw, 16px); font-weight: 700; margin-top: 4px; color: #fff;">Syela Zeruya Tandi Lalong</div>
               </div>
-              <div class="glass-card" style="padding: 14px; text-align: center; border-top: 3px solid var(--color-ts);">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">5027241047</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">Jonathan Zelig Sutopo</div>
+              <div class="glass-card intro-member-card intro-stagger-5" style="border-top: 3px solid var(--color-ts); --card-idx: 1;">
+                <div style="font-size: clamp(9px, 1vw, 11px); color: var(--text-muted); text-transform: uppercase;">5027241047</div>
+                <div style="font-size: clamp(13px, 1.3vw, 16px); font-weight: 700; margin-top: 4px; color: #fff;">Jonathan Zelig Sutopo</div>
               </div>
-              <div class="glass-card" style="padding: 14px; text-align: center; border-top: 3px solid var(--color-fpa);">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">5027241085</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">Ahmad Syauqi Reza</div>
+              <div class="glass-card intro-member-card intro-stagger-6" style="border-top: 3px solid var(--color-fpa); --card-idx: 2;">
+                <div style="font-size: clamp(9px, 1vw, 11px); color: var(--text-muted); text-transform: uppercase;">5027241085</div>
+                <div style="font-size: clamp(13px, 1.3vw, 16px); font-weight: 700; margin-top: 4px; color: #fff;">Ahmad Syauqi Reza</div>
               </div>
-              <div class="glass-card" style="padding: 14px; text-align: center; border-top: 3px solid #10b981;">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">5027241111</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">Maritza Adelia Sucipto</div>
+              <div class="glass-card intro-member-card intro-stagger-7" style="border-top: 3px solid #10b981; --card-idx: 3;">
+                <div style="font-size: clamp(9px, 1vw, 11px); color: var(--text-muted); text-transform: uppercase;">5027241111</div>
+                <div style="font-size: clamp(13px, 1.3vw, 16px); font-weight: 700; margin-top: 4px; color: #fff;">Maritza Adelia Sucipto</div>
               </div>
-              <div class="glass-card" style="padding: 14px; text-align: center; border-top: 3px solid #14B8A6;">
-                <div style="font-size: 11px; color: var(--text-muted); text-transform: uppercase;">5027241117</div>
-                <div style="font-size: 16px; font-weight: 700; margin-top: 4px; color: #fff;">Adinda Cahya Pramesti</div>
+              <div class="glass-card intro-member-card intro-stagger-8" style="border-top: 3px solid #14B8A6; --card-idx: 4;">
+                <div style="font-size: clamp(9px, 1vw, 11px); color: var(--text-muted); text-transform: uppercase;">5027241117</div>
+                <div style="font-size: clamp(13px, 1.3vw, 16px); font-weight: 700; margin-top: 4px; color: #fff;">Adinda Cahya Pramesti</div>
               </div>
             </div>
           </div>
@@ -75,13 +79,13 @@ Slides.register({
       label: 'Alokasi Tanpa Strategi',
       enter(ctx) {
         ctx.root.innerHTML = `
-          <div class="slide-content">
-            <div class="slide-header-box" style="margin-bottom: 12px;">
+          <div class="slide-content slide-up">
+            <div class="slide-header-box s2-enter s2-enter-d1" style="margin-bottom: 12px;">
               <div class="slide-category">Problem Statement (1/4)</div>
               <h2 class="slide-heading">Alokasi Task Tanpa Strategi Terarah</h2>
               <p class="slide-subheading">Task masuk secara acak ke VM heterogen, menyebabkan beban menumpuk di satu mesin sementara mesin lain menganggur.</p>
             </div>
-            <div id="slide2-canvas" style="flex: 1; display: flex; align-items: center; justify-content: center;"></div>
+            <div id="slide2-canvas" class="s2-canvas-enter" style="flex: 1; display: flex; align-items: center; justify-content: center;"></div>
           </div>
         `;
 
@@ -90,7 +94,7 @@ Slides.register({
         // Alokasi kacau tanpa strategi: task menumpuk di VM Compute
         const randomUnscheduled = [0, 0, 0, 0, 0, 1, 1, 2];
         const svgEl = window.TOY.drawAssignment(ctx, randomUnscheduled, {
-          title: 'Alokasi Task Acak: VM Compute Mengalami Penumpukan Beban Parah',
+          title: 'Alokasi Task Acak: Penumpukan Beban Parah di VM Compute',
           highlightVm: 0,
           width: 1100,
           height: 440
@@ -104,13 +108,13 @@ Slides.register({
       label: 'Sorot VM Bottleneck',
       enter(ctx) {
         ctx.root.innerHTML = `
-          <div class="slide-content">
-            <div class="slide-header-box" style="margin-bottom: 12px;">
+          <div class="slide-content slide-up">
+            <div class="slide-header-box s2-enter s2-enter-d1" style="margin-bottom: 12px;">
               <div class="slide-category">Problem Statement (2/4)</div>
               <h2 class="slide-heading">VM Bottleneck Menentukan Waktu Selesai (Makespan)</h2>
               <p class="slide-subheading">Makespan sistem ditentukan oleh VM paling lambat selesai, sehingga utilisasi sumber daya menjadi sangat timpang.</p>
             </div>
-            <div id="slide2-canvas" style="flex: 1; display: flex; align-items: center; justify-content: center;"></div>
+            <div id="slide2-canvas" class="s2-canvas-enter" style="flex: 1; display: flex; align-items: center; justify-content: center;"></div>
           </div>
         `;
 
@@ -118,7 +122,7 @@ Slides.register({
         if (!canvas) return;
         const bottleneckAssignment = [0, 0, 0, 1, 0, 1, 0, 2];
         const svgEl = window.TOY.drawAssignment(ctx, bottleneckAssignment, {
-          title: 'Garis Merah Putus-putus Menunjukkan Batas Kritis Makespan Sistem',
+          title: 'Garis Merah Menunjukkan Batas Kritis Makespan Sistem',
           highlightVm: 0,
           highlightTask: 4,
           width: 1100,
@@ -134,38 +138,38 @@ Slides.register({
       enter(ctx) {
         ctx.root.innerHTML = `
           <div class="slide-content slide-up">
-            <div class="slide-header-box" style="margin-bottom: 16px;">
+            <div class="slide-header-box s2-enter s2-enter-d1" style="margin-bottom: 16px;">
               <div class="slide-category">Problem Statement (3/4)</div>
               <h2 class="slide-heading">Dilema: Kecepatan Eksekusi vs Efisiensi Biaya</h2>
               <p class="slide-subheading">Memilih VM Compute mempercepat waktu namun tarif 150 G$/s melipatgandakan total biaya sewa.</p>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; flex: 1; align-items: center;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: clamp(12px, 2vw, 24px); flex: 1; align-items: center;">
               <!-- VM Compute -->
-              <div class="glass-card" style="border: 2px solid var(--color-vm-compute); padding: 28px; text-align: center;">
-                <div style="font-size: 36px; margin-bottom: 10px;">🚀</div>
-                <h3 style="font-size: 22px; font-weight: 800; color: #fff;">VM Compute</h3>
-                <div style="font-size: 13px; font-weight: 700; color: #fca5a5; margin: 8px 0;">2500 MIPS (Sangat Cepat)</div>
-                <div style="font-size: 28px; font-family: var(--font-mono); font-weight: 900; color: #ef4444; margin: 12px 0;">150 G$/s</div>
-                <p style="font-size: 13px; color: var(--text-muted);">Biaya 8.3x lebih mahal dari VM Light.</p>
+              <div class="glass-card s2-card-enter" style="border: 2px solid var(--color-vm-compute); padding: clamp(16px, 2.5vw, 28px); text-align: center;">
+                <div style="font-size: clamp(24px, 3vw, 36px); margin-bottom: 10px;">🚀</div>
+                <h3 style="font-size: clamp(16px, 1.8vw, 22px); font-weight: 800; color: #fff;">VM Compute</h3>
+                <div style="font-size: clamp(11px, 1.1vw, 13px); font-weight: 700; color: #fca5a5; margin: 8px 0;">2500 MIPS (Sangat Cepat)</div>
+                <div style="font-size: clamp(20px, 2.3vw, 28px); font-family: var(--font-mono); font-weight: 900; color: #ef4444; margin: 12px 0;">150 G$/s</div>
+                <p style="font-size: clamp(11px, 1.1vw, 13px); color: var(--text-muted);">Biaya 8.3x lebih mahal dari VM Light.</p>
               </div>
 
               <!-- VM Standard -->
-              <div class="glass-card" style="border: 2px solid var(--color-vm-standard); padding: 28px; text-align: center;">
-                <div style="font-size: 36px; margin-bottom: 10px;">⚖️</div>
-                <h3 style="font-size: 22px; font-weight: 800; color: #fff;">VM Standard</h3>
-                <div style="font-size: 13px; font-weight: 700; color: #93c5fd; margin: 8px 0;">1500 MIPS (Moderat)</div>
-                <div style="font-size: 28px; font-family: var(--font-mono); font-weight: 900; color: #3b82f6; margin: 12px 0;">40 G$/s</div>
-                <p style="font-size: 13px; color: var(--text-muted);">Keseimbangan performa umum.</p>
+              <div class="glass-card s2-card-enter" style="border: 2px solid var(--color-vm-standard); padding: clamp(16px, 2.5vw, 28px); text-align: center;">
+                <div style="font-size: clamp(24px, 3vw, 36px); margin-bottom: 10px;">⚖️</div>
+                <h3 style="font-size: clamp(16px, 1.8vw, 22px); font-weight: 800; color: #fff;">VM Standard</h3>
+                <div style="font-size: clamp(11px, 1.1vw, 13px); font-weight: 700; color: #93c5fd; margin: 8px 0;">1500 MIPS (Moderat)</div>
+                <div style="font-size: clamp(20px, 2.3vw, 28px); font-family: var(--font-mono); font-weight: 900; color: #3b82f6; margin: 12px 0;">40 G$/s</div>
+                <p style="font-size: clamp(11px, 1.1vw, 13px); color: var(--text-muted);">Keseimbangan performa umum.</p>
               </div>
 
               <!-- VM Light -->
-              <div class="glass-card" style="border: 2px solid var(--color-vm-light); padding: 28px; text-align: center;">
-                <div style="font-size: 36px; margin-bottom: 10px;">🍃</div>
-                <h3 style="font-size: 22px; font-weight: 800; color: #fff;">VM Light</h3>
-                <div style="font-size: 13px; font-weight: 700; color: #6ee7b7; margin: 8px 0;">800 MIPS (Lambat)</div>
-                <div style="font-size: 28px; font-family: var(--font-mono); font-weight: 900; color: #10b981; margin: 12px 0;">18 G$/s</div>
-                <p style="font-size: 13px; color: var(--text-muted);">Paling hemat biaya sewa.</p>
+              <div class="glass-card s2-card-enter" style="border: 2px solid var(--color-vm-light); padding: clamp(16px, 2.5vw, 28px); text-align: center;">
+                <div style="font-size: clamp(24px, 3vw, 36px); margin-bottom: 10px;">🍃</div>
+                <h3 style="font-size: clamp(16px, 1.8vw, 22px); font-weight: 800; color: #fff;">VM Light</h3>
+                <div style="font-size: clamp(11px, 1.1vw, 13px); font-weight: 700; color: #6ee7b7; margin: 8px 0;">800 MIPS (Lambat)</div>
+                <div style="font-size: clamp(20px, 2.3vw, 28px); font-family: var(--font-mono); font-weight: 900; color: #10b981; margin: 12px 0;">18 G$/s</div>
+                <p style="font-size: clamp(11px, 1.1vw, 13px); color: var(--text-muted);">Paling hemat biaya sewa.</p>
               </div>
             </div>
           </div>
@@ -178,18 +182,18 @@ Slides.register({
       label: 'Fungsi Objektif F(S) 2 Sumbu',
       enter(ctx) {
         ctx.root.innerHTML = `
-          <div class="slide-content">
-            <div class="slide-header-box" style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-end;">
+          <div class="slide-content slide-up">
+            <div class="slide-header-box s2-enter s2-enter-d1" style="margin-bottom: 8px; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 12px;">
               <div>
                 <div class="slide-category">Fungsi Objektif (4/4)</div>
-                <h2 class="slide-heading" style="font-size: 26px;">Trade-off Makespan vs Cost: Minimize F(S)</h2>
-                <p class="slide-subheading" style="font-size: 14px;">Titik solusi diarahkan menuju pojok kiri-bawah (Utopian Point).</p>
+                <h2 class="slide-heading" style="font-size: clamp(20px, 2.2vw, 26px);">Trade-off Makespan vs Cost: Minimize F(S)</h2>
+                <p class="slide-subheading" style="font-size: clamp(12px, 1.2vw, 14px);">Titik solusi diarahkan menuju pojok kiri-bawah (Utopian Point).</p>
               </div>
-              <div style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(251, 191, 36, 0.4); padding: 8px 18px; border-radius: 8px; font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: #fbbf24; transform: translateY(20px);">
+              <div class="s2-enter s2-enter-d2" style="background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(251, 191, 36, 0.4); padding: 8px 18px; border-radius: 8px; font-family: var(--font-mono); font-size: clamp(11px, 1.2vw, 15px); font-weight: 700; color: #fbbf24;">
                 F(S) = 0.5 · (Makespan / RefM) + 0.5 · (Cost / RefC)
               </div>
             </div>
-            <div id="slide2-canvas" style="flex: 1; display: flex; align-items: center; justify-content: center;"></div>
+            <div id="slide2-canvas" class="s2-canvas-enter" style="flex: 1; display: flex; align-items: center; justify-content: center;"></div>
           </div>
         `;
 

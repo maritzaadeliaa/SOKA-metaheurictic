@@ -403,6 +403,137 @@ html, body {
 }
 
 /* ==========================================================================
+   7b. ANIMASI INTRO STAGGERED (Slide 1 & 2)
+   ========================================================================== */
+@keyframes introFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.97);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes introFadeDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes introScale {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+    filter: blur(6px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.03);
+    filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes introCardReveal {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.92);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+@keyframes glowPulse {
+  0%, 100% { box-shadow: 0 0 15px rgba(99, 102, 241, 0.2), 0 0 30px rgba(99, 102, 241, 0.05); }
+  50% { box-shadow: 0 0 25px rgba(99, 102, 241, 0.4), 0 0 50px rgba(99, 102, 241, 0.15); }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.intro-stagger-1 { opacity: 0; animation: introFadeDown 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards; }
+.intro-stagger-2 { opacity: 0; animation: introFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards; }
+.intro-stagger-3 { opacity: 0; animation: introFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.45s forwards; }
+.intro-stagger-4 { opacity: 0; animation: introCardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.6s forwards; }
+.intro-stagger-5 { opacity: 0; animation: introCardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.7s forwards; }
+.intro-stagger-6 { opacity: 0; animation: introCardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.8s forwards; }
+.intro-stagger-7 { opacity: 0; animation: introCardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.9s forwards; }
+.intro-stagger-8 { opacity: 0; animation: introCardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) 1.0s forwards; }
+
+/* Intro Slide Title Shimmer Effect */
+.intro-title-shimmer {
+  background: linear-gradient(
+    90deg, #ffffff 0%, #94a3b8 25%, #e2e8f0 50%, #94a3b8 75%, #ffffff 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: shimmer 4s linear infinite 1.2s;
+}
+
+/* Intro Member Cards */
+.intro-member-card {
+  padding: 14px 10px;
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.intro-member-card:hover {
+  transform: translateY(-4px) scale(1.04);
+}
+
+/* Slide 2 animation helpers */
+.s2-enter {
+  opacity: 0;
+  animation: introFadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.s2-enter-d1 { animation-delay: 0.1s; }
+.s2-enter-d2 { animation-delay: 0.25s; }
+.s2-enter-d3 { animation-delay: 0.4s; }
+.s2-enter-d4 { animation-delay: 0.55s; }
+
+.s2-card-enter {
+  opacity: 0;
+  animation: introCardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.s2-card-enter:nth-child(1) { animation-delay: 0.3s; }
+.s2-card-enter:nth-child(2) { animation-delay: 0.45s; }
+.s2-card-enter:nth-child(3) { animation-delay: 0.6s; }
+
+/* Slide 2 Step 4 SVG Canvas Animation */
+.s2-canvas-enter {
+  opacity: 0;
+  animation: introFadeUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+/* ==========================================================================
    8. ELEMEN KONTEN SLIDE STANDAR & TIPOGRAFI BESAR
    ========================================================================== */
 .slide-content {
