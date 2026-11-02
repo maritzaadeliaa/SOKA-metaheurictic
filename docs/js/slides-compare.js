@@ -1,465 +1,367 @@
 /**
- * slides-compare.js - SOKA Presentasi Metaheuristik (Orang 4)
- * Menangani Slide 8 (Studi Kasus) dan Slide 9 (Komparasi Metrik TS vs FPA)
+ * slides-compare.js [O4] - Slide 8 (Studi Kasus GoCJ_Dataset_500) & Slide 9 (Komparasi 6 metrik)
+ * Dependensi: charts.js (Charts.renderComparisonBar + CSS o4-*), data/results.json.
+ * Prinsip: tidak ada angka hardcoded. Semua angka/insight berasal dari results.json.
  */
-
 (function () {
-  // Store global untuk menampung hasil benchmark dari results.json
-  let resultsData = [];
+  "use strict";
 
-  // Pemuatan data hasil benchmark dari docs/data/results.json
-  fetch("data/results.json")
-    .then((response) => response.json())
-    .then((data) => {
-      resultsData = data;
-    })
-    .catch((err) => {
-      console.warn(
-        "Gagal memuat results.json, menggunakan data fallback lokal:",
-        err,
-      );
-      // Fallback data jika results.json belum tersedia
-      resultsData = [
-        {
-          dataset: "GoCJ_Dataset_100",
-          tasks: 100,
-          algorithm: "TabuSearch",
-          makespan_s: 407.2,
-          total_cost_gd: 5210.5,
-          utilization_pct: 88.4,
-          imbalance: 0.22,
-          throughput_tps: 0.25,
-          scheduling_ms_mean: 12.4,
-        },
-        {
-          dataset: "GoCJ_Dataset_100",
-          tasks: 100,
-          algorithm: "FlowerPollination",
-          makespan_s: 478.6,
-          total_cost_gd: 5280.1,
-          utilization_pct: 81.2,
-          imbalance: 0.38,
-          throughput_tps: 0.21,
-          scheduling_ms_mean: 18.2,
-        },
-        {
-          dataset: "GoCJ_Dataset_500",
-          tasks: 500,
-          algorithm: "TabuSearch",
-          makespan_s: 1842.1,
-          total_cost_gd: 24510.0,
-          utilization_pct: 91.5,
-          imbalance: 0.18,
-          throughput_tps: 0.27,
-          scheduling_ms_mean: 45.8,
-        },
-        {
-          dataset: "GoCJ_Dataset_500",
-          tasks: 500,
-          algorithm: "FlowerPollination",
-          makespan_s: 1985.4,
-          total_cost_gd: 24820.5,
-          utilization_pct: 86.3,
-          imbalance: 0.29,
-          throughput_tps: 0.25,
-          scheduling_ms_mean: 92.4,
-        },
-        {
-          dataset: "GoCJ_Dataset_1000",
-          tasks: 1000,
-          algorithm: "TabuSearch",
-          makespan_s: 3843.5,
-          total_cost_gd: 51020.0,
-          utilization_pct: 93.2,
-          imbalance: 0.15,
-          throughput_tps: 0.26,
-          scheduling_ms_mean: 112.5,
-        },
-        {
-          dataset: "GoCJ_Dataset_1000",
-          tasks: 1000,
-          algorithm: "FlowerPollination",
-          makespan_s: 3898.2,
-          total_cost_gd: 51240.8,
-          utilization_pct: 90.1,
-          imbalance: 0.21,
-          throughput_tps: 0.25,
-          scheduling_ms_mean: 245.1,
-        },
-      ];
-    });
+  const ALGO = { ts: "TabuSearch", fpa: "FlowerPollination" };
+  const CASE_DATASET = "GoCJ_Dataset_500";
+  // Subset yang ditampilkan di grafik (agar label terbaca). Insight dihitung dari SEMUA dataset sumber.
+  const SHOW = {
+    GoCJ: [100, 300, 500, 700, 1000],
+    Sintetik: [100, 500, 1000, 2000, 5000, 10000],
+  };
+  const METRICS = [
+    {
+      key: "makespan_s",
+      title: "Makespan",
+      unit: "detik",
+      better: "low",
+      hint: "makin kecil makin baik",
+    },
+    {
+      key: "throughput_tps",
+      title: "Throughput",
+      unit: "task/detik",
+      better: "high",
+      hint: "makin besar makin baik",
+    },
+    {
+      key: "total_cost_gd",
+      title: "Total Cost",
+      unit: "G$",
+      better: "low",
+      hint: "makin kecil makin hemat",
+    },
+    {
+      key: "utilization_pct",
+      title: "Resource Utilization",
+      unit: "%",
+      better: "high",
+      hint: "makin tinggi makin efisien",
+    },
+    {
+      key: "imbalance",
+      title: "Degree of Imbalance",
+      unit: "indeks",
+      better: "low",
+      hint: "makin kecil makin seimbang",
+    },
+    {
+      key: "scheduling_ms_mean",
+      title: "Scheduling Time",
+      unit: "ms",
+      better: "low",
+      hint: "makin kecil makin cepat konvergen",
+    },
+  ];
 
-  // Helper untuk mengambil nilai spesifik dari dataset
-  function getMetricValue(datasetName, algoName, metricKey, defaultValue) {
-    if (!resultsData || resultsData.length === 0) return defaultValue;
-    const match = resultsData.find(
-      (d) =>
-        d.dataset.includes(datasetName) &&
-        d.algorithm.toLowerCase().includes(algoName.toLowerCase()),
-    );
-    return match ? match[metricKey] : defaultValue;
+  let TOKEN = 0; // step lama berhenti jika user pindah step
+  let viewSource = "GoCJ"; // state toggle, dipertahankan antar step slide 9
+
+  /* ========================================================================
+     DATA: fetch sekali, di-cache sebagai Promise. Gagal -> error eksplisit, bukan fallback palsu.
+     fetch() tidak jalan via file:// -> uji lewat `python -m http.server -d docs`.
+     ======================================================================== */
+  let _p = null;
+  function loadData() {
+    if (!_p) {
+      _p = fetch("data/results.json")
+        .then((r) => {
+          if (!r.ok)
+            throw new Error("HTTP " + r.status + " pada data/results.json");
+          return r.json();
+        })
+        .then((d) => {
+          if (!Array.isArray(d) || !d.length)
+            throw new Error("results.json kosong / bukan array");
+          return d;
+        });
+      _p.catch(() => {
+        _p = null;
+      }); // izinkan retry pada step berikutnya
+    }
+    return _p;
   }
 
-  // ==========================================
-  // SLIDE 8: STUDI KASUS (GoCJ_Dataset_500)
-  // ==========================================
+  // Exact match. Pencocokan substring lama ("100" cocok ke GoCJ_Dataset_1000 & Synthetic_100) dibuang.
+  const row = (data, dataset, algo) =>
+    data.find((d) => d.dataset === dataset && d.algorithm === algo);
+
+  // Pasangan TS/FPA per dataset untuk satu sumber, terurut menurut jumlah task
+  function pairs(data, source) {
+    const m = new Map();
+    data
+      .filter((d) => d.source === source)
+      .forEach((d) => {
+        const e = m.get(d.dataset) || { dataset: d.dataset, tasks: d.tasks };
+        if (d.algorithm === ALGO.ts) e.ts = d;
+        if (d.algorithm === ALGO.fpa) e.fpa = d;
+        m.set(d.dataset, e);
+      });
+    return [...m.values()]
+      .filter((p) => p.ts && p.fpa)
+      .sort((a, b) => a.tasks - b.tasks);
+  }
+
+  const pct = (v) =>
+    (v > 0 ? "+" : "") +
+    v.toLocaleString("id-ID", { maximumFractionDigits: 2 }) +
+    "%";
+
+  // Insight dihitung dari data. Netral: hanya menyatakan fakta, arah "baik" mengikuti m.better.
+  function insight(m, all, source) {
+    let tsW = 0,
+      fpW = 0,
+      tie = 0,
+      sum = 0,
+      mx = null;
+    all.forEach((p) => {
+      const a = p.ts[m.key],
+        b = p.fpa[m.key];
+      const tsBetter = m.better === "low" ? a < b : a > b;
+      const fpBetter = m.better === "low" ? b < a : b > a;
+      if (tsBetter) tsW++;
+      else if (fpBetter) fpW++;
+      else tie++;
+      const d = a !== 0 ? ((b - a) / Math.abs(a)) * 100 : 0;
+      sum += d;
+      if (!mx || Math.abs(d) > Math.abs(mx.d)) mx = { d, tasks: p.tasks };
+    });
+    const n = all.length;
+    return (
+      `Dari ${n} dataset ${source}: TS lebih baik pada <b class="o4-ts">${tsW}</b>, FPA pada <b class="o4-fpa">${fpW}</b>` +
+      `${tie ? ", imbang " + tie : ""}. Selisih FPA vs TS rata-rata <b>${pct(sum / n)}</b>, terbesar <b>${pct(mx.d)}</b> pada ${mx.tasks} task.`
+    );
+  }
+
+  function scaffold(ctx, cat, title, caption, right) {
+    ctx.root.innerHTML = `
+      <div class="slide-content fade-in">
+        <div class="slide-header-box" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px">
+          <div>
+            <div class="slide-category">${cat}</div>
+            <h2 class="slide-heading" style="font-size:30px">${title}</h2>
+            <p class="slide-subheading" style="font-size:16px">${caption}</p>
+          </div>
+          ${right || ""}
+        </div>
+        <div class="o4-body" style="flex-direction:column;align-items:stretch;justify-content:center"></div>
+      </div>`;
+    const body = ctx.root.querySelector(".o4-body");
+    const tok = ++TOKEN;
+    return { body, alive: () => tok === TOKEN && body.isConnected };
+  }
+
+  async function withData(S, fn) {
+    S.body.innerHTML =
+      '<div class="o4-sub" style="text-align:center">Memuat data benchmark…</div>';
+    try {
+      const data = await loadData();
+      if (!S.alive()) return;
+      fn(data);
+    } catch (err) {
+      if (!S.alive()) return;
+      S.body.innerHTML = `<div class="o4-card" style="border-left:4px solid var(--color-danger)">
+        <div class="o4-k">Gagal memuat data</div>
+        <div class="o4-sub" style="font-size:15px">${err.message}. Jalankan lewat HTTP server (<code>python -m http.server -d docs</code>); <code>file://</code> memblokir fetch().</div></div>`;
+    }
+  }
+
+  /* ========================================================================
+     SLIDE 8: STUDI KASUS (GoCJ_Dataset_500)
+     ======================================================================== */
+  async function caseInput(ctx) {
+    const S = scaffold(
+      ctx,
+      "Studi Kasus (1/4)",
+      "Masalah: 500 Task ke 16 VM",
+      "GoCJ_Dataset_500: workload nyata dengan ukuran task sangat bervariasi.",
+    );
+    await withData(S, (data) => {
+      const r = row(data, CASE_DATASET, ALGO.ts);
+      S.body.innerHTML = `
+        <div class="o4-stats">
+          <div class="o4-stat o4-in" style="--d:.05s"><b>${r ? r.tasks : "n/a"}</b><span>Task (GoCJ)</span></div>
+          <div class="o4-stat o4-in" style="--d:.2s"><b>16</b><span>VM: 4 Compute · 6 Standard · 6 Light</span></div>
+          <div class="o4-stat o4-in" style="--d:.35s"><b>2</b><span>Datacenter · 10 Host</span></div>
+        </div>
+        <div class="o4-card o4-in" style="--d:.55s">
+          <div class="o4-k">Tujuan optimasi</div>
+          <div class="o4-sub" style="font-size:16px">Minimalkan F(S) = 0.5 · Makespan/Ref + 0.5 · Cost/Ref. Acuan Ref = solusi awal LPT.</div>
+        </div>`;
+    });
+  }
+
+  function caseTs(ctx) {
+    const S = scaffold(
+      ctx,
+      "Studi Kasus (2/4)",
+      "Proses: Tabu Search",
+      "Satu solusi diperbaiki berulang dengan memori larangan.",
+    );
+    S.body.innerHTML = `
+      <div class="o4-card ts o4-in">
+        <div class="o4-k">Alur</div>
+        <div class="o4-chips" style="align-items:center">
+          <span class="o4-chip ts">1. Solusi awal LPT</span><span class="o4-sub">→</span>
+          <span class="o4-chip ts">2. Bangkitkan 40 kandidat</span><span class="o4-sub">→</span>
+          <span class="o4-chip ts">3. Pilih terbaik non-tabu</span><span class="o4-sub">→</span>
+          <span class="o4-chip ts">4. Catat ke tabu list</span>
+        </div>
+      </div>
+      <div class="o4-stats">
+        <div class="o4-stat o4-in" style="--d:.1s"><b class="o4-ts" style="font-size:30px">50 / 25 / 25</b><span>% Critical / Cost / Swap</span></div>
+        <div class="o4-stat o4-in" style="--d:.25s"><b class="o4-ts" style="font-size:30px">15</b><span>Tabu tenure</span></div>
+        <div class="o4-stat o4-in" style="--d:.4s"><b class="o4-ts" style="font-size:30px">150</b><span>Iterasi maksimum (atau berhenti jika stagnan)</span></div>
+      </div>
+      <div class="o4-sub" style="text-align:center">Aspirasi: larangan boleh dilanggar jika menghasilkan F terbaik baru.</div>`;
+  }
+
+  function caseFpa(ctx) {
+    const S = scaffold(
+      ctx,
+      "Studi Kasus (3/4)",
+      "Proses: Flower Pollination",
+      "Populasi solusi bergerak menuju g* atau saling berkombinasi.",
+    );
+    S.body.innerHTML = `
+      <div class="o4-card fpa o4-in">
+        <div class="o4-k">Alur per generasi</div>
+        <div class="o4-chips" style="align-items:center">
+          <span class="o4-chip fpa">r &lt; 0.8 → Global (Lévy flight ke g*)</span>
+          <span class="o4-chip fpa">r ≥ 0.8 → Lokal (crossover bunga j, k)</span>
+          <span class="o4-chip fpa">Seleksi greedy</span>
+        </div>
+      </div>
+      <div class="o4-stats">
+        <div class="o4-stat o4-in" style="--d:.1s"><b class="o4-fpa" style="font-size:30px">20</b><span>Bunga (populasi)</span></div>
+        <div class="o4-stat o4-in" style="--d:.25s"><b class="o4-fpa" style="font-size:30px">80</b><span>Generasi</span></div>
+        <div class="o4-stat o4-in" style="--d:.4s"><b class="o4-fpa" style="font-size:30px">γ 0.1 · β 1.5</b><span>Parameter Lévy (Mantegna)</span></div>
+      </div>
+      <div class="o4-sub" style="text-align:center">Bunga baru hanya menggantikan bunga lama jika F lebih kecil.</div>`;
+  }
+
+  async function caseResult(ctx) {
+    const S = scaffold(
+      ctx,
+      "Studi Kasus (4/4)",
+      "Solusi: TS vs FPA pada GoCJ_500",
+      "Rata-rata 3 run. Batang tumbuh dari nol.",
+    );
+    await withData(S, (data) => {
+      const ts = row(data, CASE_DATASET, ALGO.ts);
+      const fp = row(data, CASE_DATASET, ALGO.fpa);
+      if (!ts || !fp) {
+        S.body.innerHTML = `<div class="o4-card"><div class="o4-k">INSUFFICIENT DATA</div><div class="o4-sub">${CASE_DATASET} tidak ada di results.json untuk kedua algoritma.</div></div>`;
+        return;
+      }
+      const dM = ((fp.makespan_s - ts.makespan_s) / ts.makespan_s) * 100;
+      const dC =
+        ((fp.total_cost_gd - ts.total_cost_gd) / ts.total_cost_gd) * 100;
+      S.body.innerHTML = `
+        <div style="display:flex;gap:18px;justify-content:center">
+          <div class="o4-chart"><canvas id="o4-case-m" width="540" height="320"></canvas></div>
+          <div class="o4-chart"><canvas id="o4-case-c" width="540" height="320"></canvas></div>
+        </div>
+        <div class="o4-sub" style="text-align:center;font-size:15px">
+          Makespan: FPA <b>${pct(dM)}</b> vs TS · Total Cost: FPA <b>${pct(dC)}</b> vs TS. Selisih kecil; nilai absolut pada grafik, bukan klaim signifikansi statistik.</div>`;
+      Charts.renderComparisonBar(
+        "o4-case-m",
+        ["Makespan"],
+        [ts.makespan_s],
+        [fp.makespan_s],
+        "detik",
+        { showDelta: true },
+      );
+      Charts.renderComparisonBar(
+        "o4-case-c",
+        ["Total Cost"],
+        [ts.total_cost_gd],
+        [fp.total_cost_gd],
+        "G$",
+        { showDelta: true },
+      );
+    });
+  }
+
   Slides.register({
     id: "studi-kasus",
-    title: "Studi Kasus: GoCJ Dataset 500 Tasks",
+    title: "Studi Kasus: GoCJ Dataset 500",
     steps: [
-      {
-        label: "1. Problem Input: 500 Tasks ke 16 VMs",
-        enter(ctx) {
-          ctx.root.innerHTML = `
-            <div class="slide-card">
-              <div class="badge">Skenario Real-World</div>
-              <h3>Beban Kerja: GoCJ_Dataset_500</h3>
-              <div class="stats-grid">
-                <div class="stat-box">
-                  <span class="stat-value">500</span>
-                  <span class="stat-label">Tasks Real-World (GoCJ)</span>
-                </div>
-                <div class="stat-box">
-                  <span class="stat-value">16</span>
-                  <span class="stat-label">VMs Heterogen (3 Tipe)</span>
-                </div>
-                <div class="stat-box">
-                  <span class="stat-value">2</span>
-                  <span class="stat-label">Datacenters</span>
-                </div>
-              </div>
-              <p class="description-text">
-                Dataset GoCJ mencerminkan pola tugas dunia nyata dari Google Cloud dengan variasi ukuran instruksi (MI) yang ekstrem, menguji ketahanan penjadwalan dalam menghindari pemicuan <i>bottleneck</i>.
-              </p>
-            </div>
-          `;
-        },
-      },
-      {
-        label: "2. Proses Evaluasi Tabu Search (TS)",
-        enter(ctx) {
-          ctx.root.innerHTML = `
-            <div class="slide-card">
-              <div class="badge badge-ts">Proses Tabu Search</div>
-              <h3>Pencarian Lokal Berbasis Memori</h3>
-              <ul class="feature-list">
-                <li><b>Solusi Awal:</b> Dikonstruksi menggunakan aturan LPT (Longest Processing Time).</li>
-                <li><b>Eksplorasi Pergerakan:</b> Mengeksekusi <i>Critical VM Move</i> (50%), <i>Cost Move</i> (25%), dan <i>Swap</i> (25%).</li>
-                <li><b>Fungsi Memori:</b> Menandai pergerakan terbaru ke dalam <i>Tabu List</i> (Tenure = 15) untuk mencegah siklus berulang.</li>
-                <li><b>Kriteria Aspirasi:</b> Melanggar batasan tabu hanya jika menghasilkan rekor <i>Makespan</i> terbaik baru.</li>
-              </ul>
-            </div>
-          `;
-        },
-      },
-      {
-        label: "3. Proses Evaluasi Flower Pollination (FPA)",
-        enter(ctx) {
-          ctx.root.innerHTML = `
-            <div class="slide-card">
-              <div class="badge badge-fpa">Proses FPA</div>
-              <h3>Eksplorasi Populasional & Penyerbukan</h3>
-              <ul class="feature-list">
-                <li><b>Inisialisasi Populasi:</b> 20 populasi bunga (solusi penugasan awal).</li>
-                <li><b>Global Pollination ($p = 0.8$):</b> Lompatan jauh berbasis <i>Lévy Flight</i> menuju bunga terbaik global ($g^*$).</li>
-                <li><b>Local Pollination ($1 - p = 0.2$):</b> Variasi acak lokal memanfaatkan dua populasi bunga acak.</li>
-                <li><b>Seleksi Greedy:</b> Bunga baru hanya menggantikan populasi lama jika menghasilkan nilai <i>fitness</i> lebih optimal.</li>
-              </ul>
-            </div>
-          `;
-        },
-      },
-      {
-        label: "4. Hasil Akhir Komparasi GoCJ_500",
-        enter(ctx) {
-          const tsMakespan = getMetricValue(
-            "500",
-            "Tabu",
-            "makespan_s",
-            1842.1,
-          );
-          const fpaMakespan = getMetricValue(
-            "500",
-            "Flower",
-            "makespan_s",
-            1985.4,
-          );
-          const tsCost = getMetricValue(
-            "500",
-            "Tabu",
-            "total_cost_gd",
-            24510.0,
-          );
-          const fpaCost = getMetricValue(
-            "500",
-            "Flower",
-            "total_cost_gd",
-            24820.5,
-          );
-
-          ctx.root.innerHTML = `
-            <div class="slide-card">
-              <div class="badge">Hasil Studi Kasus</div>
-              <h3>Perbandingan Performa GoCJ_Dataset_500</h3>
-              <div class="comparison-table-wrapper">
-                <table class="data-table">
-                  <thead>
-                    <tr>
-                      <th>Metrik Utama</th>
-                      <th>Tabu Search (TS)</th>
-                      <th>Flower Pollination (FPA)</th>
-                      <th>Selisih / Keunggulan</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><b>Makespan (Detik)</b></td>
-                      <td class="highlight-good">${tsMakespan.toFixed(1)} s</td>
-                      <td>${fpaMakespan.toFixed(1)} s</td>
-                      <td class="highlight-good">TS lebih cepat ~${(((fpaMakespan - tsMakespan) / fpaMakespan) * 100).toFixed(1)}%</td>
-                    </tr>
-                    <tr>
-                      <td><b>Total Cost (G$)</b></td>
-                      <td class="highlight-good">G$ ${tsCost.toLocaleString()}</td>
-                      <td>G$ ${fpaCost.toLocaleString()}</td>
-                      <td>Sangat Seimbang (&lt; 1.3%)</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="description-text">
-                <b>Kesimpulan Studi Kasus:</b> Pada skenario 500 tasks, Tabu Search berhasil meminimalkan Makespan lebih optimal dibandingkan FPA berkat mekanisme memori intensif yang mencegah penumpukan tugas di VM bottleneck.
-              </p>
-            </div>
-          `;
-        },
-      },
+      { label: "Masalah: 500 task ke 16 VM", enter: caseInput },
+      { label: "Proses: Tabu Search", enter: caseTs },
+      { label: "Proses: Flower Pollination", enter: caseFpa },
+      { label: "Solusi: TS vs FPA", enter: caseResult },
     ],
   });
 
-  // ==========================================
-  // SLIDE 9: KOMPARASI TS vs FPA PER METRİK
-  // ==========================================
+  /* ========================================================================
+     SLIDE 9: KOMPARASI (1 metrik per step + toggle GoCJ/Sintetik)
+     ======================================================================== */
+  function metricStep(m, idx) {
+    return async function (ctx) {
+      const toggle = `<div class="o4-toggle" id="o4-tg">
+        <button data-s="GoCJ">GoCJ</button><button data-s="Sintetik">Sintetik</button></div>`;
+      const S = scaffold(
+        ctx,
+        `Komparasi (${idx}/${METRICS.length})`,
+        `${m.title} (${m.unit})`,
+        `Arah baik: ${m.hint}.`,
+        toggle,
+      );
+
+      await withData(S, (data) => {
+        S.body.innerHTML = `
+          <div class="o4-chart" id="o4-cbox"></div>
+          <div class="o4-card" id="o4-ins" style="margin-top:12px"></div>`;
+        const draw = () => {
+          ctx.root
+            .querySelectorAll("#o4-tg button")
+            .forEach((b) =>
+              b.classList.toggle("on", b.dataset.s === viewSource),
+            );
+          const all = pairs(data, viewSource);
+          if (!all.length) {
+            S.body.querySelector("#o4-cbox").innerHTML =
+              '<div class="o4-sub" style="padding:40px">INSUFFICIENT DATA: tidak ada pasangan TS/FPA untuk sumber ini.</div>';
+            return;
+          }
+          const sel = all.filter((p) => SHOW[viewSource].includes(p.tasks));
+          const shown = sel.length ? sel : all;
+          const prefix = viewSource === "GoCJ" ? "GoCJ " : "Syn ";
+          const id = "o4-cv-" + m.key;
+          S.body.querySelector("#o4-cbox").innerHTML =
+            `<canvas id="${id}" width="1100" height="330"></canvas>`;
+          Charts.renderComparisonBar(
+            id,
+            shown.map((p) => prefix + p.tasks),
+            shown.map((p) => p.ts[m.key]),
+            shown.map((p) => p.fpa[m.key]),
+            m.unit,
+          );
+          S.body.querySelector("#o4-ins").innerHTML =
+            `<div class="o4-k">Insight (dihitung dari data)</div><div class="o4-sub" style="font-size:15px">${insight(m, all, viewSource)}</div>`;
+        };
+        ctx.root.querySelectorAll("#o4-tg button").forEach((b) =>
+          b.addEventListener("click", () => {
+            viewSource = b.dataset.s;
+            draw();
+          }),
+        );
+        draw();
+      });
+    };
+  }
+
   Slides.register({
     id: "komparasi-metrik",
     title: "Komparasi Metrik: Tabu Search vs FPA",
-    steps: [
-      {
-        label: "1. Metrik 1: Makespan (Waktu Selesai Total)",
-        enter(ctx) {
-          ctx.root.innerHTML = `
-            <div class="slide-card">
-              <h3>Makespan (Detik) — <i>Makin Kecil Makin Bagus</i></h3>
-              <p class="insight-text"><b>Insight:</b> TS menghasilkan Makespan lebih kecil dari FPA pada dataset kecil–menengah (contoh GoCJ_100: ~407s vs ~478s). Pada dataset besar (GoCJ_1000), selisih performa memendek.</p>
-              <div class="chart-container">
-                <canvas id="chartMakespan" width="680" height="260"></canvas>
-              </div>
-            </div>
-          `;
-          setTimeout(() => {
-            const datasets = ["GoCJ 100", "GoCJ 500", "GoCJ 1000"];
-            const dataTS = [
-              getMetricValue("100", "Tabu", "makespan_s", 407.2),
-              getMetricValue("500", "Tabu", "makespan_s", 1842.1),
-              getMetricValue("1000", "Tabu", "makespan_s", 3843.5),
-            ];
-            const dataFPA = [
-              getMetricValue("100", "Flower", "makespan_s", 478.6),
-              getMetricValue("500", "Flower", "makespan_s", 1985.4),
-              getMetricValue("1000", "Flower", "makespan_s", 3898.2),
-            ];
-            if (window.Charts) {
-              window.Charts.renderComparisonBar(
-                "chartMakespan",
-                datasets,
-                dataTS,
-                dataFPA,
-                "s",
-              );
-            }
-          }, 50);
-        },
-      },
-      {
-        label: "2. Metrik 2: Throughput (Tasks / Detik)",
-        enter(ctx) {
-          ctx.root.innerHTML = `
-            <div class="slide-card">
-              <h3>Throughput (Tasks / Detik) — <i>Makin Besar Makin Bagus</i></h3>
-              <p class="insight-text"><b>Insight:</b> Laju pemrosesan tugas Tabu Search secara konsisten lebih tinggi berkat waktu eksekusi Makespan yang lebih singkat pada tiap pengujian.</p>
-              <div class="chart-container">
-                <canvas id="chartThroughput" width="680" height="260"></canvas>
-              </div>
-            </div>
-          `;
-          setTimeout(() => {
-            const datasets = ["GoCJ 100", "GoCJ 500", "GoCJ 1000"];
-            const dataTS = [
-              getMetricValue("100", "Tabu", "throughput_tps", 0.25),
-              getMetricValue("500", "Tabu", "throughput_tps", 0.27),
-              getMetricValue("1000", "Tabu", "throughput_tps", 0.26),
-            ];
-            const dataFPA = [
-              getMetricValue("100", "Flower", "throughput_tps", 0.21),
-              getMetricValue("500", "Flower", "throughput_tps", 0.25),
-              getMetricValue("1000", "Flower", "throughput_tps", 0.25),
-            ];
-            if (window.Charts) {
-              window.Charts.renderComparisonBar(
-                "chartThroughput",
-                datasets,
-                dataTS,
-                dataFPA,
-                "TPS",
-              );
-            }
-          }, 50);
-        },
-      },
-      {
-        label: "3. Metrik 3: Total Cost (G$)",
-        enter(ctx) {
-          ctx.root.innerHTML = `
-            <div class="slide-card">
-              <h3>Total Cost (G$) — <i>Efisiensi Biaya Komputasi</i></h3>
-              <p class="insight-text"><b>Insight:</b> Selisih total biaya sewa VM antara Tabu Search dan FPA relatif sangat tipis (&lt; 2%) karena kedua algoritma mengoptimalkan fungsi biaya sebanding.</p>
-              <div class="chart-container">
-                <canvas id="chartCost" width="680" height="260"></canvas>
-              </div>
-            </div>
-          `;
-          setTimeout(() => {
-            const datasets = ["GoCJ 100", "GoCJ 500", "GoCJ 1000"];
-            const dataTS = [
-              getMetricValue("100", "Tabu", "total_cost_gd", 5210.5),
-              getMetricValue("500", "Tabu", "total_cost_gd", 24510.0),
-              getMetricValue("1000", "Tabu", "total_cost_gd", 51020.0),
-            ];
-            const dataFPA = [
-              getMetricValue("100", "Flower", "total_cost_gd", 5280.1),
-              getMetricValue("500", "Flower", "total_cost_gd", 24820.5),
-              getMetricValue("1000", "Flower", "total_cost_gd", 51240.8),
-            ];
-            if (window.Charts) {
-              window.Charts.renderComparisonBar(
-                "chartCost",
-                datasets,
-                dataTS,
-                dataFPA,
-                "G$",
-              );
-            }
-          }, 50);
-        },
-      },
-      {
-        label: "4. Metrik 4: Resource Utilization (%)",
-        enter(ctx) {
-          ctx.root.innerHTML = `
-            <div class="slide-card">
-              <h3>Resource Utilization (%) — <i>Makin Tinggi Makin Efisien</i></h3>
-              <p class="insight-text"><b>Insight:</b> Tabu Search mencatatkan tingkat pemanfaatan kapasitas VM rata-rata 2–5% lebih tinggi dibandingkan FPA pada seluruh variasi dataset.</p>
-              <div class="chart-container">
-                <canvas id="chartUtilization" width="680" height="260"></canvas>
-              </div>
-            </div>
-          `;
-          setTimeout(() => {
-            const datasets = ["GoCJ 100", "GoCJ 500", "GoCJ 1000"];
-            const dataTS = [
-              getMetricValue("100", "Tabu", "utilization_pct", 88.4),
-              getMetricValue("500", "Tabu", "utilization_pct", 91.5),
-              getMetricValue("1000", "Tabu", "utilization_pct", 93.2),
-            ];
-            const dataFPA = [
-              getMetricValue("100", "Flower", "utilization_pct", 81.2),
-              getMetricValue("500", "Flower", "utilization_pct", 86.3),
-              getMetricValue("1000", "Flower", "utilization_pct", 90.1),
-            ];
-            if (window.Charts) {
-              window.Charts.renderComparisonBar(
-                "chartUtilization",
-                datasets,
-                dataTS,
-                dataFPA,
-                "%",
-              );
-            }
-          }, 50);
-        },
-      },
-      {
-        label: "5. Metrik 5: Degree of Imbalance",
-        enter(ctx) {
-          ctx.root.innerHTML = `
-            <div class="slide-card">
-              <h3>Degree of Imbalance — <i>Makin Kecil Makin Seimbang</i></h3>
-              <p class="insight-text"><b>Insight:</b> Tabu Search secara efektif menekan tingkat ketidakseimbangan pembebanan antar VM berkat fokus pergerakan <i>Critical VM Move</i>.</p>
-              <div class="chart-container">
-                <canvas id="chartImbalance" width="680" height="260"></canvas>
-              </div>
-            </div>
-          `;
-          setTimeout(() => {
-            const datasets = ["GoCJ 100", "GoCJ 500", "GoCJ 1000"];
-            const dataTS = [
-              getMetricValue("100", "Tabu", "imbalance", 0.22),
-              getMetricValue("500", "Tabu", "imbalance", 0.18),
-              getMetricValue("1000", "Tabu", "imbalance", 0.15),
-            ];
-            const dataFPA = [
-              getMetricValue("100", "Flower", "imbalance", 0.38),
-              getMetricValue("500", "Flower", "imbalance", 0.29),
-              getMetricValue("1000", "Flower", "imbalance", 0.21),
-            ];
-            if (window.Charts) {
-              window.Charts.renderComparisonBar(
-                "chartImbalance",
-                datasets,
-                dataTS,
-                dataFPA,
-                "",
-              );
-            }
-          }, 50);
-        },
-      },
-      {
-        label: "6. Metrik 6: Scheduling Time (ms)",
-        enter(ctx) {
-          ctx.root.innerHTML = `
-            <div class="slide-card">
-              <h3>Scheduling Time (ms) — <i>Overhead Komputasi Penjadwalan</i></h3>
-              <p class="insight-text"><b>Insight:</b> Waktu konvergensi FPA meningkat signifikan pada dataset skala besar akibat kalkulasi pencarian berbasis populasi (20 populasi x 80 iterasi).</p>
-              <div class="chart-container">
-                <canvas id="chartSchedulingTime" width="680" height="260"></canvas>
-              </div>
-            </div>
-          `;
-          setTimeout(() => {
-            const datasets = ["GoCJ 100", "GoCJ 500", "GoCJ 1000"];
-            const dataTS = [
-              getMetricValue("100", "Tabu", "scheduling_ms_mean", 12.4),
-              getMetricValue("500", "Tabu", "scheduling_ms_mean", 45.8),
-              getMetricValue("1000", "Tabu", "scheduling_ms_mean", 112.5),
-            ];
-            const dataFPA = [
-              getMetricValue("100", "Flower", "scheduling_ms_mean", 18.2),
-              getMetricValue("500", "Flower", "scheduling_ms_mean", 92.4),
-              getMetricValue("1000", "Flower", "scheduling_ms_mean", 245.1),
-            ];
-            if (window.Charts) {
-              window.Charts.renderComparisonBar(
-                "chartSchedulingTime",
-                datasets,
-                dataTS,
-                dataFPA,
-                "ms",
-              );
-            }
-          }, 50);
-        },
-      },
-    ],
+    steps: METRICS.map((m, i) => ({
+      label: `Metrik ${i + 1}: ${m.title}`,
+      enter: metricStep(m, i + 1),
+    })),
   });
 })();
