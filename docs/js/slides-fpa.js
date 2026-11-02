@@ -239,7 +239,7 @@
     const st = document.createElement("style");
     st.id = "fp-style";
     st.textContent = `
-      .fp-cap{font-size:19px;color:var(--text-muted);margin:0 0 10px;min-height:28px}
+      .fp-cap{font-size:18px;line-height:1.4;color:var(--text-muted);margin:0 0 10px;min-height:52px;max-width:1100px}
       .fp-cap b{color:var(--color-fpa)}
       .fp-body{flex:1;display:flex;gap:20px;min-height:0;align-items:center}
       .fp-foot{position:absolute;left:56px;right:56px;bottom:12px;font-size:12.5px;color:var(--text-dim);font-family:var(--font-mono);display:flex;gap:16px;flex-wrap:wrap}
@@ -432,7 +432,7 @@
       ctx,
       "FPA · Inspirasi alam",
       "Penyerbukan bunga",
-      "Bunga tidak bisa berjalan. Serbuk sarinya yang berpindah, jauh atau dekat.",
+      "Bunga tidak bisa berpindah, jadi serbuk sarinya yang dibawa pergi. Lebah membawanya jauh, sedangkan angin hanya membawanya ke bunga di dekatnya.",
     );
     const fl = [
       [170, 290, 32],
@@ -463,10 +463,10 @@
         <g id="fpBeeB"><ellipse rx="11" ry="8" fill="${GOLD}"/><ellipse cx="-4" cy="-9" rx="8" ry="5" fill="#fff" opacity=".8"/></g>
         <circle id="fpDustA" r="6" fill="${CYAN}"/><circle id="fpDustB" r="6" fill="${CYAN}"/>
         <rect x="26" y="22" width="22" height="6" rx="3" fill="${PINK}"/>
-        <text x="58" y="30" fill="#f8fafc" font-size="17" font-weight="700">Biotik: lebah, burung, terbang jauh (Lévy flight)</text>
+        <text x="58" y="30" fill="#f8fafc" font-size="17" font-weight="700">Lebah: terbang jauh (penyerbukan global)</text>
         <rect x="26" y="52" width="22" height="6" rx="3" fill="${CYAN}"/>
-        <text x="58" y="60" fill="#f8fafc" font-size="17" font-weight="700">Abiotik: angin, air, hanya ke sekitar</text>
-        <text x="990" y="100" fill="${GOLD}" font-size="16" font-weight="800">g*</text>
+        <text x="58" y="60" fill="#f8fafc" font-size="17" font-weight="700">Angin: hanya ke sekitar (penyerbukan lokal)</text>
+        <text x="1076" y="98" fill="${GOLD}" font-size="15" font-weight="800" text-anchor="end">g* = bunga terbaik</text>
       </svg></div>`;
     const q = (id) => S.body.querySelector("#" + id);
     const items = [
@@ -495,8 +495,8 @@
       "FPA · Populasi",
       withStar ? "Bunga terbaik g*" : "Satu bunga = satu jadwal",
       withStar
-        ? "g* = bunga dengan fitness F terkecil. Ia jadi arah lompatan."
-        : `${P.pop} bunga (toy). Tiap bunga menugaskan 8 task ke 3 VM.`,
+        ? "Bunga dengan F terkecil disebut g*, yaitu jadwal terbaik saat ini. Bunga lain akan bergerak mendekati g*."
+        : `Satu bunga adalah satu kemungkinan jadwal, yaitu cara membagi 8 task ke 3 VM. Angka F adalah nilai jadwal, makin kecil makin bagus.`,
     );
     S.body.innerHTML = `<div style="width:100%"><div class="fp-cards">${cardsHTML(s0.pop, s0.fit, { gIdx: s0.gIdx, star: withStar, dimOthers: withStar, stagger: !withStar, lptTag: true })}</div>${vmLegend}</div>`;
   }
@@ -508,7 +508,7 @@
       ctx,
       "FPA · Switch probability",
       "Global atau lokal?",
-      "Tiap bunga mengundi r. Jika r < p = 0.8, penyerbukan global, jika tidak lokal.",
+      "Setiap bunga mengundi angka r antara 0 dan 1. Jika r kurang dari 0.8 terjadi penyerbukan global (jauh), jika tidak terjadi penyerbukan lokal (dekat).",
     );
     S.body.innerHTML = `
       <div style="width:100%;padding:6px 8px">
@@ -541,7 +541,7 @@
       ctx,
       "FPA · Global pollination",
       "Lévy flight menuju g*",
-      "Banyak lompatan pendek, sesekali satu lompatan jauh. Task meniru VM milik g*.",
+      "Lompatan Lévy flight kebanyakan pendek tetapi sesekali sangat jauh, sehingga pencarian bisa menjelajah luas. Bunga lalu meniru penempatan VM milik g*, jadi jadwalnya makin mirip jadwal terbaik.",
     );
     const steps = run.steps;
     let x = 0,
@@ -641,7 +641,7 @@
       ctx,
       "FPA · Local pollination",
       "Angin membawa serbuk sari ke dekat",
-      `Peluang 20% (r = ${f2(lo.r)} ≥ 0.8). Pilih dua bunga acak, <b>j</b> dan <b>k</b>. Iterasi ${lo.iter}.`,
+      `Bunga <b>i</b> memilih dua bunga lain secara acak, yaitu <b>j</b> dan <b>k</b>. Ini terjadi dengan peluang 20% (iterasi ${lo.iter}, r = ${f2(lo.r)} ≥ 0.8).`,
     );
     const roles = {};
     roles[lo.i] = "i";
@@ -657,7 +657,7 @@
       ctx,
       "FPA · Crossover",
       "Task diambil dari j atau k",
-      `ε = ${f2(lo.eps)}: bila VM j dan k berbeda, ambil ${lo.eps < 0.5 ? "dari <b>j</b> (ε < 0.5)" : "dari <b>k</b> (ε ≥ 0.5)"}.`,
+      `Jika VM sebuah task sama di j dan k, langsung dipakai. Jika berbeda, diambil dari <b>${lo.eps < 0.5 ? "j</b> karena ε = " + f2(lo.eps) + " (kurang dari 0.5)" : "k</b> karena ε = " + f2(lo.eps) + " (0.5 atau lebih)"}.`,
     );
     const n = TOY.tasks.length;
     const A = lo.popBefore[lo.j];
@@ -716,7 +716,7 @@
       ctx,
       "FPA · Seleksi greedy",
       "Lebih baik diganti, lebih buruk dibuang",
-      "Bunga baru hanya menggantikan bunga lama jika F-nya lebih kecil.",
+      "Bunga baru hanya menggantikan bunga lama jika nilai F-nya lebih kecil. Jika tidak, bunga baru dibuang dan bunga lama tetap dipakai.",
     );
     S.body.innerHTML = `<div class="fp-pair">${caseHTML(lo, 0.1)}${rj ? caseHTML(rj, 0.7) : ""}</div>`;
   }
@@ -727,7 +727,7 @@
       ctx,
       "FPA · Update g*",
       "Rekor baru memperbarui g*",
-      `Kurva F terbaik turun tiap kali g* diperbarui (${run.records} kali dalam ${P.iters} iterasi toy).`,
+      `Setiap kali ada bunga yang lebih baik dari g*, g* diganti dan kurva F terbaik turun. Pada toy ini g* diperbarui ${run.records} kali dalam ${P.iters} iterasi.`,
     );
     const W = 740,
       H = 410,
@@ -806,15 +806,15 @@
 
   function stepFinal(ctx) {
     const run = getRun();
+    const lpt = TOY.evaluate(run.lpt);
+    const fin = TOY.evaluate(run.best);
+    const dF = ((fin.fitness - lpt.fitness) / lpt.fitness) * 100;
     const S = scaffold(
       ctx,
       "FPA · Solusi",
       "Hasil akhir: FPA vs LPT",
-      `g* setelah ${P.iters} iterasi toy dibandingkan solusi awal LPT.`,
+      `Jadwal terbaik g* setelah ${P.iters} iterasi dibandingkan dengan jadwal awal LPT. Nilai F turun ${Math.abs(dF).toFixed(1)}%, artinya jadwalnya lebih baik.`,
     );
-    const lpt = TOY.evaluate(run.lpt);
-    const fin = TOY.evaluate(run.best);
-    const dF = ((fin.fitness - lpt.fitness) / lpt.fitness) * 100;
     const met = (e) =>
       `<div class="fp-metrics"><div class="m"><span>Makespan</span><b>${e.makespan.toFixed(1)} s</b></div><div class="m"><span>Biaya</span><b>${e.cost.toFixed(0)} G$</b></div><div class="m"><span>Fitness F</span><b>${f4(e.fitness)}</b></div></div>`;
     S.body.innerHTML = `
