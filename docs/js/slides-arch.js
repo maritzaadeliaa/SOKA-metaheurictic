@@ -1,87 +1,106 @@
 /**
- * ============================================================================
- * SOKA-metaheurictic: Slide Presentation Framework
- * File    : js/slides-arch.js
- * Pemilik : [Orang 4]
- * Tujuan  : Slide 3: Arsitektur Cloud & Dataset (4 step)
- * ============================================================================
- * 
- * PANDUAN ORANG 4 (Sesuai PDF Hal. 6):
- * 4 step:
- * (1) 2 datacenter, 10 host: 4 High Performance (8 core, 3000 MIPS) dan 6 Standard (4 core, 1500 MIPS).
- * (2) 16 VM masuk ke host: 4 Compute (2500 MIPS, 150 G$/s), 6 Standard (1500 MIPS, 40 G$/s), 6 Light (800 MIPS, 18 G$/s).
- * (3) Dataset GoCJ: 19 file, 100-1000 task, workload nyata, ada task sangat besar.
- * (4) Dataset sintetik: 100-10.000 task, distribusi 30% kecil / 40% sedang / 30% besar.
+ * slides-arch.js - SOKA Presentasi Metaheuristik (Orang 4)
+ * Menangani Slide 3: Arsitektur Sistem, Spesifikasi Cluster, dan Dataset
  */
 
-// STUB SAJA - Dikerjakan oleh Orang 4
-Slides.register({
-  id: 'slide-3',
-  title: 'Arsitektur Cloud & Dataset',
-  steps: [
-    {
-      label: '2 Datacenter & 10 Host Fisik',
-      enter(ctx) {
-        ctx.root.innerHTML = `
-          <div class="slide-content stub-slide">
-            <div class="stub-badge">Bagian Orang 4 (Stub)</div>
-            <h2 class="stub-title">Slide 3: Arsitektur Cloud & Dataset (Step 1/4)</h2>
-            <div class="stub-box">
-              <div class="stub-icon">☁️</div>
-              <p class="stub-text"><strong>Step 1:</strong> 2 Datacenter, 10 Host (4 High Performance @ 3000 MIPS, 6 Standard @ 1500 MIPS).</p>
-              <p class="stub-subtext">File ini akan diimplementasikan oleh <strong>Orang 4</strong>.</p>
+(function () {
+  Slides.register({
+    id: "arsitektur-sistem",
+    title: "Arsitektur Sistem & Spesifikasi Workload",
+    steps: [
+      {
+        label: "1. Topologi Datacenter & Infrastruktur Cloud",
+        enter(ctx) {
+          ctx.root.innerHTML = `
+            <div class="slide-card">
+              <div class="badge">Infrastruktur Simulasi</div>
+              <h3>Topologi Cluster Hierarkis (CloudSim)</h3>
+              <div class="stats-grid">
+                <div class="stat-box">
+                  <span class="stat-value">1</span>
+                  <span class="stat-label">Datacenter Utama</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-value">10</span>
+                  <span class="stat-label">Host Fisik Heterogen</span>
+                </div>
+                <div class="stat-box">
+                  <span class="stat-value">40</span>
+                  <span class="stat-label">Virtual Machines (VM)</span>
+                </div>
+              </div>
+              <p class="description-text">
+                Infrastruktur disimulasikan menggunakan kerangka kerja CloudSim 3.0.3 dengan topologi terdistribusi yang membagi 40 VM secara merata di atas 10 Host fisik berkapasitas heterogen.
+              </p>
             </div>
-          </div>
-        `;
-      }
-    },
-    {
-      label: '16 VM Heterogen (3-Tier)',
-      enter(ctx) {
-        ctx.root.innerHTML = `
-          <div class="slide-content stub-slide">
-            <div class="stub-badge">Bagian Orang 4 (Stub)</div>
-            <h2 class="stub-title">Slide 3: Arsitektur Cloud & Dataset (Step 2/4)</h2>
-            <div class="stub-box">
-              <div class="stub-icon">🖥️</div>
-              <p class="stub-text"><strong>Step 2:</strong> 16 VM (4 Compute @ 150 G$/s, 6 Standard @ 40 G$/s, 6 Light @ 18 G$/s).</p>
-              <p class="stub-subtext">File ini akan diimplementasikan oleh <strong>Orang 4</strong>.</p>
+          `;
+        },
+      },
+      {
+        label: "2. Spesifikasi Heterogenitas Host & VM",
+        enter(ctx) {
+          ctx.root.innerHTML = `
+            <div class="slide-card">
+              <div class="badge">Konfigurasi Hardware</div>
+              <h3>Profil Spesifikasi VM & Host</h3>
+              <div class="comparison-table-wrapper">
+                <table class="data-table">
+                  <thead>
+                    <tr>
+                      <th>Komponen</th>
+                      <th>Jumlah Unit</th>
+                      <th>Kapasitas Komputasi (MIPS)</th>
+                      <th>RAM & Bandwidth</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><b>Host Tipe A</b></td>
+                      <td>5 Unit</td>
+                      <td>2 Core @ 10,000 MIPS</td>
+                      <td>16 GB RAM / 10 Gbps</td>
+                    </tr>
+                    <tr>
+                      <td><b>Host Tipe B</b></td>
+                      <td>5 Unit</td>
+                      <td>4 Core @ 20,000 MIPS</td>
+                      <td>32 GB RAM / 10 Gbps</td>
+                    </tr>
+                    <tr>
+                      <td><b>VM High-Perf</b></td>
+                      <td>10 Unit</td>
+                      <td>2,500 – 3,000 MIPS</td>
+                      <td>4 GB RAM (Tarif: G$ 0.12/jam)</td>
+                    </tr>
+                    <tr>
+                      <td><b>VM Standard</b></td>
+                      <td>30 Unit</td>
+                      <td>1,000 – 1,500 MIPS</td>
+                      <td>2 GB RAM (Tarif: G$ 0.05/jam)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
-          </div>
-        `;
-      }
-    },
-    {
-      label: 'Dataset Nyata GoCJ (100-1000 Task)',
-      enter(ctx) {
-        ctx.root.innerHTML = `
-          <div class="slide-content stub-slide">
-            <div class="stub-badge">Bagian Orang 4 (Stub)</div>
-            <h2 class="stub-title">Slide 3: Arsitektur Cloud & Dataset (Step 3/4)</h2>
-            <div class="stub-box">
-              <div class="stub-icon">📁</div>
-              <p class="stub-text"><strong>Step 3:</strong> Dataset nyata GoCJ: 19 file, 100-1000 task trace Google cluster.</p>
-              <p class="stub-subtext">File ini akan diimplementasikan oleh <strong>Orang 4</strong>.</p>
+          `;
+        },
+      },
+      {
+        label: "3. Karakteristik Workload & Dataset Benchmark",
+        enter(ctx) {
+          ctx.root.innerHTML = `
+            <div class="slide-card">
+              <div class="badge">Beban Kerja</div>
+              <h3>Dataset Benchmark (GoCJ & Synthetic)</h3>
+              <ul class="feature-list">
+                <li><b>GoCJ Dataset (Real-World):</b> Terdiri dari variasi tugas 100, 500, hingga 1,000 tasks yang diekstrak dari jejak eksekusi nyata Google Cloud dengan variasi ukuran instruksi (MI) yang ekstrem.</li>
+                <li><b>Synthetic Dataset (Skalabilitas):</b> Terdiri dari variasi 100 hingga 3,000 tasks sintetis untuk menguji ketahanan dan stabilitas konvergensi algoritma pada beban kerja masif.</li>
+                <li><b>Sifat Task:</b> <i>Independent Bag-of-Tasks (BoT)</i> tanpa ketergantungan antar-tugas (non-preemptive).</li>
+              </ul>
             </div>
-          </div>
-        `;
-      }
-    },
-    {
-      label: 'Dataset Sintetik 30/40/30 (Hingga 10.000 Task)',
-      enter(ctx) {
-        ctx.root.innerHTML = `
-          <div class="slide-content stub-slide">
-            <div class="stub-badge">Bagian Orang 4 (Stub)</div>
-            <h2 class="stub-title">Slide 3: Arsitektur Cloud & Dataset (Step 4/4)</h2>
-            <div class="stub-box">
-              <div class="stub-icon">📊</div>
-              <p class="stub-text"><strong>Step 4:</strong> Dataset sintetik 100 s/d 10.000 task (distribusi 30% kecil / 40% sedang / 30% besar).</p>
-              <p class="stub-subtext">File ini akan diimplementasikan oleh <strong>Orang 4</strong>.</p>
-            </div>
-          </div>
-        `;
-      }
-    }
-  ]
-});
+          `;
+        },
+      },
+    ],
+  });
+})();
