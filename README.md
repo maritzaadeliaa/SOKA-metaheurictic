@@ -253,4 +253,4 @@ Proyek ini dilengkapi dengan aplikasi presentasi berbasis web interaktif dengan 
 
 Video demo menunjukkan simulasi Task Scheduling pada CloudSim yang membandingkan Tabu Search (TS) dan Flower Pollination Algorithm (FPA)
 
-**Tautan video**: [Demo SOKA Metaheuristik](https://youtu.be/I8MCCjf9mMM)
+**Link video**: [Demo SOKA Metaheuristik](https://youtu.be/I8MCCjf9mMM)
