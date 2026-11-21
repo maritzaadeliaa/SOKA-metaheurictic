@@ -31,6 +31,12 @@ Proyek tugas mata kuliah **Sistem Komputasi Awan (SOKA)** yang berfokus pada opt
 
 ---
 
+##  Video Demo
+
+Video demo menunjukkan simulasi Task Scheduling pada CloudSim yang membandingkan Tabu Search (TS) dan Flower Pollination Algorithm (FPA)
+
+**Link video**: [Demo SOKA Metaheuristik](https://youtu.be/I8MCCjf9mMM)
+
 ## 1. Latar Belakang & Problem Formulation
 
 Penjadwalan task pada lingkungan komputasi awan heterogen merupakan masalah optimasi kombinatorial yang tergolong **NP-hard**. 
@@ -248,9 +254,3 @@ Proyek ini dilengkapi dengan aplikasi presentasi berbasis web interaktif dengan 
 - **Tombol Fullscreen**: Menampilkan layar penuh.
 
 ---
-
-## 11. Video Demo
-
-Video demo menunjukkan simulasi Task Scheduling pada CloudSim yang membandingkan Tabu Search (TS) dan Flower Pollination Algorithm (FPA)
-
-**Link video**: [Demo SOKA Metaheuristik](https://youtu.be/I8MCCjf9mMM)
